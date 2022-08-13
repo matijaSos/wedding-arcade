@@ -1,23 +1,27 @@
 function love.load()
     circleX = 100
     circleY = 200
+
+    Object = require "lib.classic.classic"
+    require "Player"
+    player = Player(100, 100)
 end
 
 function love.update(dt)
     if love.keyboard.isDown("right") then
-        circleX = circleX + 100 * dt
+        player.x = player.x + 100 * dt
     elseif love.keyboard.isDown("left") then
-        circleX = circleX - 100 * dt
+        player.x = player.x - 100 * dt
     elseif love.keyboard.isDown("up") then
-        circleY = circleY - 100 * dt
+        player.y = player.y - 100 * dt
     elseif love.keyboard.isDown("down") then
-        circleY = circleY + 100 * dt
+        player.y = player.y + 100 * dt
     end
 end
 
 function love.draw()
     love.graphics.print("Hello World, this is my arcade game", 400, 300)
-    love.graphics.circle("line", circleX, circleY, 50)
+    player:draw()
 end
 
 function love.quit()
