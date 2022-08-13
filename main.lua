@@ -1,6 +1,10 @@
 function love.load()
     Player = require "entities.Player"
     player = Player(100, 100)
+
+    -- Add some platforms
+    love.graphics.setBackgroundColor(1, 1, 1)
+
 end
 
 function love.update(dt)
@@ -20,7 +24,6 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.print("Hello World, this is my arcade game", 400, 300)
     player:draw()
 end
 
