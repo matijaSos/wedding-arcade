@@ -1,3 +1,6 @@
-[submodule "lib/classic"]
-	path = lib/classic
-	url = https://github.com/rxi/classic
+[submodule "libs/bump"]
+	path = libs/bump
+	url = https://github.com/kikito/bump.lua
+[submodule "libs/hump"]
+	path = libs/hump
+	url = git@github.com:vrld/hump
