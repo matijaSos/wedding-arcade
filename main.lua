@@ -1,7 +1,7 @@
 bump = require 'libs.bump.bump'
 
 local tileSize = 16
-local gravity = 120
+local gravity = 650
 
 function love.load()
     love.graphics.setBackgroundColor(1, 1, 1)
@@ -40,7 +40,7 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown('up') and player.isGrounded then
-        player.yCurrVelocity = -250
+        player.yCurrVelocity = -500
         player.isGrounded = false
     end
 
