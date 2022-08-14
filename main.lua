@@ -1,6 +1,7 @@
 bump = require 'libs.bump.bump'
 
 local tileSize = 16
+local gravity = 120
 
 function love.load()
     love.graphics.setBackgroundColor(1, 1, 1)
@@ -8,7 +9,7 @@ function love.load()
     world = bump.newWorld(tileSize)
 
     Player = require "entities.Player"
-    player = Player(100, 100)
+    player = Player(300, 50)
 
     -- Add some platforms
     Platform = require 'entities.Platform'
@@ -27,23 +28,58 @@ function love.update(dt)
 
     -- TODO(matija): extract this to player or provide interface for the player.
     if love.keyboard.isDown("right") then
-        dx = 100 * dt
+        dx = player.xMovSpeed * dt
     end
     if love.keyboard.isDown("left") then
-        dx = -100 * dt
+        dx = -player.xMovSpeed * dt
     end
-    if love.keyboard.isDown("up") then
-        dy = -100 * dt
+    
+    -- Apply gravity
+    if not player.isGrounded then
+        player.yCurrVelocity = player.yCurrVelocity + gravity * dt
     end
-    if love.keyboard.isDown("down") then
-        dy = 100 * dt
+
+    if love.keyboard.isDown('up') and player.isGrounded then
+        player.yCurrVelocity = -250
+        player.isGrounded = false
     end
+
+    dy = player.yCurrVelocity * dt
 
     local goalX = player.x + dx
     local goalY = player.y + dy
 
-    player.x, player.y, collisions, len = world:move(player, goalX, goalY)
-    print (player.x, player.y, len)
+    player.x, player.y, collisions, collLen = world:move(player, goalX, goalY)
+
+    -- If e.g. player walks off the platform (without jumping), we want
+    -- him to start falling.
+    if collLen == 0 then
+        player.isGrounded = false
+    end
+
+    for i, coll in ipairs(collisions) do
+        if coll.touch.y > goalY then
+            -- Couldn't go as high as wanted - blocked from above
+            -- (e.g. when jumping, bumped head in the platform above).
+            player.yCurrVelocity = 0
+
+        -- NOTE(matija): Checking normal is important because want player to keep
+        -- falling if there was a side collision (e.g. against a wall). Normal
+        -- will be -1 in case of the floor collision.
+        elseif coll.normal.y < 0 then
+            -- Couldn't go as low as wanted - blocked from below (e.g. fell on the
+            -- ground).
+            player.isGrounded = true
+            player.yCurrVelocity = 0
+        end
+
+        print ('normal', coll.normal.y)
+    end
+
+
+    --print (player.x, player.y, len)
+    print ('yVel:', player.yCurrVelocity)
+    print('isGrounded:', player.isGrounded)
 end
 
 function love.draw()
