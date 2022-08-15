@@ -1,4 +1,5 @@
 bump = require 'libs.bump.bump'
+Camera = require 'libs.stalker-x.Camera'
 
 local tileSize = 16
 local gravity = 900
@@ -7,6 +8,10 @@ function love.load()
     love.graphics.setBackgroundColor(1, 1, 1)
 
     world = bump.newWorld(tileSize)
+
+    camera = Camera()
+    camera:setFollowLerp(0.2)
+    camera:setFollowStyle('PLATFORMER')
 
     Player = require "entities.Player"
     player = Player(300, 50)
@@ -27,6 +32,9 @@ function love.load()
 end
 
 function love.update(dt)
+    camera:update(dt)
+    camera:follow(player.x, player.y)
+
     local dx = 0
     local dy = 0
 
@@ -87,15 +95,14 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.push()
-
-    love.graphics.translate(-player.x + windowWidth / 2, 0)
+    camera:attach()
 
     for i, e in ipairs(entities) do
         e:draw()
     end
 
-    love.graphics.pop()
+    camera:detach()
+
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: xxx", 10, 10)
 end
