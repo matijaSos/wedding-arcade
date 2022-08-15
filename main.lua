@@ -1,7 +1,7 @@
 bump = require 'libs.bump.bump'
 
 local tileSize = 16
-local gravity = 650
+local gravity = 900
 
 function love.load()
     love.graphics.setBackgroundColor(1, 1, 1)
@@ -20,6 +20,10 @@ function love.load()
     for i, e in ipairs(entities) do
         world:add(e, e:getRect())    
     end
+
+    -- TODO(matija): should I do this here?
+    windowWidth = love.graphics.getWidth()
+    windowHeight = love.graphics.getHeight()
 end
 
 function love.update(dt)
@@ -40,8 +44,8 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown('up') and player.isGrounded then
-        player.yCurrVelocity = -500
-        player.isGrounded = false
+        player.yCurrVelocity = -600
+        --player.isGrounded = false
     end
 
     dy = player.yCurrVelocity * dt
@@ -51,7 +55,7 @@ function love.update(dt)
 
     player.x, player.y, collisions, collLen = world:move(player, goalX, goalY)
 
-    -- If e.g. player walks off the platform (without jumping), we want
+    -- If e.g. player walks or jumps off the platform, we want
     -- him to start falling.
     if collLen == 0 then
         player.isGrounded = false
@@ -83,9 +87,17 @@ function love.update(dt)
 end
 
 function love.draw()
+    love.graphics.push()
+
+    love.graphics.translate(-player.x + windowWidth / 2, 0)
+
     for i, e in ipairs(entities) do
         e:draw()
     end
+
+    love.graphics.pop()
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.print("Score: xxx", 10, 10)
 end
 
 function love.quit()

@@ -4,3 +4,6 @@
 [submodule "libs/hump"]
 	path = libs/hump
 	url = git@github.com:vrld/hump
+[submodule "libs/stalker-x"]
+	path = libs/stalker-x
+	url = git@github.com:a327ex/stalker-x
