@@ -1,10 +1,15 @@
 bump = require 'libs.bump.bump'
 Camera = require 'libs.stalker-x.Camera'
 
+Player = require "entities.Player"
+Platform = require 'entities.Platform'
+
 local tileSize = 16
 local gravity = 900
 
 function love.load()
+    math.randomseed( os.time() )
+
     love.graphics.setBackgroundColor(1, 1, 1)
 
     world = bump.newWorld(tileSize)
@@ -13,15 +18,11 @@ function love.load()
     camera:setFollowLerp(0.2)
     camera:setFollowStyle('PLATFORMER')
 
-    Player = require "entities.Player"
     player = Player(300, 50)
 
     -- Add some platforms
-    Platform = require 'entities.Platform'
-    p1 = Platform(120, 360, tileSize * 40, tileSize)
-    p2 = Platform(140, 200, tileSize * 6, tileSize)
+    entities = {player, unpack(generatePlatforms())}
 
-    entities = {p1, p2, player}
     for i, e in ipairs(entities) do
         world:add(e, e:getRect())    
     end
@@ -101,7 +102,15 @@ function love.draw()
         e:draw()
     end
 
+    -- For debugging/testing.
+    love.graphics.line(0, -100, 5000, -100)
+    love.graphics.line(
+        0, love.graphics.getHeight() + 100, 5000,
+        love.graphics.getHeight() + 100
+    )
+
     camera:detach()
+
 
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: xxx", 10, 10)
@@ -109,4 +118,60 @@ end
 
 function love.quit()
   print("Thanks for playing! Come back soon!")
+end
+
+
+function generatePlatforms()
+    local minPlatformLengthInTiles = 4
+    local maxPlatformLengthInTiles = 20
+
+    local minY = -100
+    local maxY = love.graphics.getHeight() + 100
+
+    local minXDist = 10
+    local maxXDist = 200
+
+    local minYDist = 50
+    local maxYDist = 200
+
+    local platforms = {}
+
+    -- 1st platform
+    local platformX = 0
+    local platformY = 350
+    local platformLengthInTiles = 7
+
+    for i=1, 20 do
+        table.insert(platforms,
+            Platform(
+                platformX, platformY,
+                platformLengthInTiles * tileSize, tileSize * 2
+            )
+        )
+
+        -- Determine data for the next platform
+        local newPlatformLengthInTiles = math.random(
+            minPlatformLengthInTiles, maxPlatformLengthInTiles
+        )
+        local newPlatformX = platformX + platformLengthInTiles * tileSize
+                             + math.random (minXDist, maxXDist)
+        local newPlatformY = clamp(
+            platformY + getRandomSign() * math.random(minYDist, maxYDist),
+            minY, maxY
+        )
+
+        platformX = newPlatformX
+        platformY = newPlatformY
+        platformLengthInTiles = newPlatformLengthInTiles
+    end
+    
+    return platforms
+end
+
+function getRandomSign()
+    if math.random(0, 1) == 0 then return -1 else return 1 end
+end
+
+function clamp(val, lower, upper)
+    return math.max(lower, math.min(upper, val))
 end
