@@ -1,8 +1,9 @@
 bump = require 'libs.bump.bump'
 Camera = require 'libs.stalker-x.Camera'
 
-Player = require "entities.Player"
+Player = require 'entities.Player'
 Platform = require 'entities.Platform'
+Scanline = require 'entities.Scanline'
 
 local tileSize = 16
 local gravity = 1900
@@ -19,9 +20,10 @@ function love.load()
     camera:setFollowStyle('PLATFORMER')
 
     player = Player(100, 50)
+    scanline = Scanline()
 
     -- Add some platforms
-    entities = {player, unpack(generatePlatforms())}
+    entities = {player, scanline, unpack(generatePlatforms())}
 
     for i, e in ipairs(entities) do
         world:add(e, e:getRect())    
@@ -37,7 +39,7 @@ function love.update(dt)
     camera:follow(player.x, player.y)
 
     player:update(dt, world, gravity)
-
+    scanline:update(dt)
 
     --print (player.x, player.y, len)
     print ('yVel:', player.yCurrVelocity)
@@ -70,6 +72,7 @@ function love.quit()
 end
 
 
+-- TODO(matija): extract this to a separate file.
 function generatePlatforms()
     local minPlatformLengthInTiles = 4
     local maxPlatformLengthInTiles = 20
