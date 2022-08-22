@@ -31,6 +31,7 @@ function Scanline:update(dt)
     for i, coll in ipairs(collisions) do
         if coll.other.isPlayer then
             print('collided with player!')
+            coll.other.isCaught = true
         end
     end
 end

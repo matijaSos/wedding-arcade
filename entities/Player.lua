@@ -9,6 +9,8 @@ function Player:init(x, y)
     self.isPlayer = true
     self.img = love.graphics.newImage('assets/player_hrvoje.png')
 
+    self.isCaught = false
+
     -- How fast player moves along the X axis. A constant for now.
     self.xMovSpeed = 200
 
