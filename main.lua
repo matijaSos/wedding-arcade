@@ -6,7 +6,7 @@ Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 
 local tileSize = 16
-local gravity = 1900
+local gravity = 2100
 
 function love.load()
     math.randomseed( os.time() )
@@ -42,8 +42,10 @@ function love.update(dt)
     scanline:update(dt)
 
     --print (player.x, player.y, len)
+    --[[
     print ('yVel:', player.yCurrVelocity)
     print('isGrounded:', player.isGrounded)
+    ]]--
 end
 
 function love.draw()

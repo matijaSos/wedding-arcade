@@ -6,10 +6,14 @@ local Player = Class{
 }
 
 function Player:init(x, y)
+    self.isPlayer = true
     self.img = love.graphics.newImage('assets/player_hrvoje.png')
 
     -- How fast player moves along the X axis. A constant for now.
     self.xMovSpeed = 200
+
+    -- When player jumps, the initial speed he has.
+    self.jumpingSpeed = 1100
     
     self.yCurrVelocity = 0
     self.isGrounded = false
@@ -48,8 +52,8 @@ function Player:update(dt, world, gravity)
         self.yCurrVelocity = self.yCurrVelocity + gravity * dt
     end
 
-    if love.keyboard.isDown('up') and self.isGrounded then
-        self.yCurrVelocity = -900
+    if love.keyboard.isDown('up', 'c', 'space') and self.isGrounded then
+        self.yCurrVelocity = -self.jumpingSpeed
         --self.isGrounded = false
     end
 
@@ -58,10 +62,19 @@ function Player:update(dt, world, gravity)
     local goalX = self.x + dx
     local goalY = self.y + dy
 
-    self.x, self.y, collisions, collLen = world:move(self, goalX, goalY)
+    local colFilter = function (item, other)
+        if other.isScanline then return 'cross'
+        end
+
+        return 'slide'
+    end
+
+    self.x, self.y, collisions, collLen = world:move(self, goalX, goalY, colFilter)
 
     -- If e.g. player walks or jumps off the platform, we want
     -- him to start falling.
+    -- TODO(matija): what about collectables, if they are in the air and player
+    -- collects them? This won't work then.
     if collLen == 0 then
         self.isGrounded = false
     end

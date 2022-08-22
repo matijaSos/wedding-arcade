@@ -6,7 +6,9 @@ local Scanline = Class{
 }
 
 function Scanline:init()
-    self.xMovSpeed = 100
+    self.isScanline = true
+
+    self.xMovSpeed = 150
 
     Entity.init(self, -300, -100, 1, 2000)
 end
@@ -17,7 +19,20 @@ function Scanline:draw()
 end
 
 function Scanline:update(dt)
-    self.x = self.x + self.xMovSpeed * dt
+    local goalX = self.x + self.xMovSpeed * dt
+    local colFilter = function (item, other)
+        return 'cross'
+    end
+
+    self.x, self.y, collisions, collLen = world:move(
+        self, goalX, self.y, colFilter
+    )
+
+    for i, coll in ipairs(collisions) do
+        if coll.other.isPlayer then
+            print('collided with player!')
+        end
+    end
 end
 
 return Scanline
