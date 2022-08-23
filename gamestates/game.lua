@@ -2,7 +2,7 @@ bump = require 'libs.bump.bump'
 Camera = require 'libs.stalker-x.Camera'
 Gamestate = require 'libs.hump.gamestate'
 
-local pause = require 'gamestates.pause'
+local gameOver = require 'gamestates.gameOver'
 
 Player = require 'entities.Player'
 Platform = require 'entities.Platform'
@@ -42,7 +42,7 @@ end
 
 function game:update(dt)
     if player.isCaught then
-        Gamestate.push(pause)
+        Gamestate.push(gameOver)
     end
 
     camera:update(dt)

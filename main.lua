@@ -2,7 +2,7 @@ Gamestate = require 'libs.hump.gamestate'
 
 local menu = require 'gamestates.menu'
 local game = require 'gamestates.game'
-local pause = require 'gamestates.pause'
+local gameOver = require 'gamestates.gameOver'
 
 function love.load()
     Gamestate.registerEvents()
@@ -16,7 +16,10 @@ end
 function love.keypressed(key)
     if key == 'escape' then
         love.event.push('quit')
-    elseif Gamestate.current() == game and key == 'p' then
-        Gamestate.push(pause)
     end
+    --[[
+    elseif Gamestate.current() == game and key == 'p' then
+        Gamestate.push(gameOver)
+    end
+    ]]--
 end
