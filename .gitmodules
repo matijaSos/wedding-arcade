@@ -7,3 +7,6 @@
 [submodule "libs/stalker-x"]
 	path = libs/stalker-x
 	url = git@github.com:a327ex/stalker-x
+[submodule "libs/sysl-text"]
+	path = libs/sysl-text
+	url = git@github.com:sysl-dev/sysl-text

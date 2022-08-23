@@ -1,4 +1,6 @@
 Gamestate = require 'libs.hump.gamestate'
+Text = require 'libs.sysl-text.example.library.slog-text'
+
 local game = require 'gamestates.game'
 
 local menu = {}
@@ -11,6 +13,17 @@ function menu:enter()
 
     backgroundImg = love.graphics.newImage('assets/pixel_art_city.png')
     fillerBgImg = love.graphics.newImage('assets/sidewalk_and_sky.png')
+
+    -- Dancing subtitle text
+    subtitleTextbox = Text.new('left',
+    {
+        font = subtitleFont
+    })
+    subtitleTextbox:send('[bounce=10]Press space to start[/bounce]', nil, true)
+end
+
+function menu:update(dt)
+    subtitleTextbox:update(dt)
 end
 
 function menu:draw()
@@ -44,8 +57,7 @@ function menu:draw()
     love.graphics.printf('Koom Escape', 0, h/2 - 80, w, 'center')
 
     -- Subtitle
-    love.graphics.setFont(subtitleFont)
-    love.graphics.printf('Press Space to play', 0, h/2 + 80, w, 'center')
+    subtitleTextbox:draw(w/2 - subtitleTextbox.get.width / 2, h/2 + 80)
 end
 
 function menu:keypressed(key)
