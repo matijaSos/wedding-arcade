@@ -21,6 +21,7 @@ function game:enter()
     math.randomseed( os.time() )
 
     love.graphics.setBackgroundColor(1, 1, 1)
+    hudFont = love.graphics.newFont(12)
 
     world = bump.newWorld(tileSize)
 
@@ -37,7 +38,6 @@ function game:enter()
     for i, e in ipairs(entities) do
         world:add(e, e:getRect())    
     end
-
 end
 
 function game:update(dt)
@@ -91,6 +91,7 @@ function game:draw()
     camera:detach()
 
     -- HUD
+    love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: xxx", 10, 10)
 

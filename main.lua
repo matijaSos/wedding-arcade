@@ -5,8 +5,10 @@ local game = require 'gamestates.game'
 local gameOver = require 'gamestates.gameOver'
 
 function love.load()
+    love.window.setFullscreen(true, 'desktop')
+    
     Gamestate.registerEvents()
-    Gamestate.switch(game)
+    Gamestate.switch(menu)
 end
 
 function love.quit()
