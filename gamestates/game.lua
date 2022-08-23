@@ -17,6 +17,16 @@ local gravity = 2100
 
 local game = {}
 
+function getAllEntities()
+  return concatTables(
+    concatTables(
+      {player, scanline},
+      platforms
+    ),
+    flyingObstacles
+  )
+end
+
 function game:enter()
     math.randomseed( os.time() )
 
@@ -29,14 +39,13 @@ function game:enter()
     camera:setFollowLerp(0.2)
     camera:setFollowStyle('PLATFORMER')
 
-    player = Player(100, 50)
     scanline = Scanline()
+    platforms = generatePlatforms({x=0, y=400, width=100}, tileSize)
+    player = Player(platforms[1].x, platforms[1].y)
+    flyingObstacles = {}
 
-    -- Add some platforms
-    entities = {player, scanline, unpack(generatePlatforms(tileSize))}
-
-    for i, e in ipairs(entities) do
-        world:add(e, e:getRect())    
+    for i, e in ipairs(getAllEntities()) do
+      world:add(e, e:getRect())
     end
 end
 
@@ -50,34 +59,14 @@ function game:update(dt)
 
     player:update(dt, world, gravity)
     scanline:update(dt)
-
-    for i, e in ipairs(entities) do
-      if e.isFlyingObstacle then
-        e:update(dt, world)
-      end
-    end
-
-    -- Remove flying objects that went significantly left from the camera.
-    cameraX = camera:toWorldCoords(0, 0)
-    for i, e in ipairs(entities) do
-      if e.isFlyingObstacle then
-        if e.x < cameraX - love.graphics.getWidth() then
-          destroyFlyingObstacle(entities, world, e)
-        end
-      end
-    end
-
-    -- TODO: Make chance of flying obstacle proportional to time passed (dt), somehow.
-    if math.random(0, 1000) < 10 then
-      flyingObstacle = generateFlyingObstacle(entities, world)
-    end
-
+    updatePlatforms(dt, world)
+    updateFlyingObstacles(dt, world)
 end
 
 function game:draw()
     camera:attach()
 
-    for i, e in ipairs(entities) do
+    for i, e in ipairs(getAllEntities()) do
         e:draw()
     end
 
@@ -97,21 +86,63 @@ function game:draw()
 
 end
 
-function generateFlyingObstacle(entities, world)
+function updatePlatforms(dt, world)
+  cameraX = camera:toWorldCoords(0, 0)
+
+  -- If reaching the end of generated platforms, generate more platforms.
+  if platforms[#platforms].x < cameraX + love.graphics.getWidth()*2 then
+    local lastPlatform = platforms[#platforms]
+    local newPlatforms = generatePlatforms({x=lastPlatform.x, y=lastPlatform.y, width=lastPlatform.w}, tileSize)
+    platforms = concatTables(platforms, newPlatforms)
+    for i, e in ipairs(newPlatforms) do
+      world:add(e, e:getRect())
+    end
+  end
+
+  -- Remove platforms that are significantly behind the scanline and will never be visible again.
+  for i, p in ipairs(platforms) do
+    if p.x + p.w < scanline.x - love.graphics.getWidth() then
+      table.remove(platforms, tablefind(platforms, p))
+      world:remove(p)
+    end
+  end
+end
+
+function updateFlyingObstacles(dt, world)
+  cameraX = camera:toWorldCoords(0, 0)
+
+  for i, fo in ipairs(flyingObstacles) do
+    fo:update(dt, world)
+  end
+
+  -- Remove flying objects that went significantly left from the camera.
+  for i, fo in ipairs(flyingObstacles) do
+    if fo.x < cameraX - love.graphics.getWidth() then
+      destroyFlyingObstacle(world, fo)
+    end
+  end
+
+  -- TODO: Make chance of flying obstacle proportional to time passed (dt), somehow.
+  if math.random(0, 1000) < 10 then
+    flyingObstacle = generateFlyingObstacle(world)
+  end
+end
+
+function generateFlyingObstacle(world)
   cameraX, cameraY = camera:toWorldCoords(0, 0)
   local x = cameraX + love.graphics.getWidth() + 100
   local y = math.random(cameraY, cameraY + love.graphics.getHeight())
 
   flyingObstacle = FlyingObstacle(x, y)
 
-  table.insert(entities, flyingObstacle)
+  table.insert(flyingObstacles, flyingObstacle)
   world:add(flyingObstacle, flyingObstacle:getRect())
 
   return flyingObstacle
 end
 
-function destroyFlyingObstacle(entities, world, flyingObstacle)
-  table.remove(entities, tablefind(entities, flyingObstacle))
+function destroyFlyingObstacle(world, flyingObstacle)
+  table.remove(flyingObstacles, tablefind(flyingObstacles, flyingObstacle))
   world:remove(flyingObstacle)
 end
 
@@ -122,6 +153,14 @@ function tablefind(tab, el)
       return index
     end
   end
+end
+
+function concatTables(t1, t2)
+  local t3 = {unpack(t1)}
+  for i=1,#t2 do
+    t3[#t3+1] = t2[i]
+  end
+  return t3
 end
 
 return game

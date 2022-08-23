@@ -1,5 +1,12 @@
 
-local generatePlatforms = function (tileSize)
+-- lastPlatform is information about the previous platform, from which we
+-- continue adding new platforms.
+-- lastPlatform.x
+-- lastPlatform.y
+-- lastPlatform.width (in pixels)
+--
+-- tileSize is size of one tile in pixels.
+local generatePlatforms = function (lastPlatform, tileSize)
     local minPlatformLengthInTiles = 4
     local maxPlatformLengthInTiles = 20
 
@@ -14,20 +21,12 @@ local generatePlatforms = function (tileSize)
 
     local platforms = {}
 
-    -- 1st platform
-    local platformX = 0
-    local platformY = 350
-    local platformLengthInTiles = 7
+    local platformX = lastPlatform.x
+    local platformY = lastPlatform.y
+    local platformLengthInTiles = lastPlatform.width / tileSize
 
     for i=1, 20 do
-        table.insert(platforms,
-            Platform(
-                platformX, platformY,
-                platformLengthInTiles * tileSize, tileSize * 2
-            )
-        )
-
-        -- Determine data for the next platform
+        -- Determine data for the next platform.
         local newPlatformLengthInTiles = math.random(
             minPlatformLengthInTiles, maxPlatformLengthInTiles
         )
@@ -41,8 +40,15 @@ local generatePlatforms = function (tileSize)
         platformX = newPlatformX
         platformY = newPlatformY
         platformLengthInTiles = newPlatformLengthInTiles
+
+        table.insert(platforms,
+                     Platform(
+                       platformX, platformY,
+                       platformLengthInTiles * tileSize, tileSize * 2
+                     )
+        )
     end
-    
+
     return platforms
 end
 
