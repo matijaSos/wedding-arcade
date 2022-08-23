@@ -20,5 +20,3 @@ function love.keypressed(key)
         Gamestate.push(pause)
     end
 end
-
-

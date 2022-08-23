@@ -7,6 +7,8 @@ local pause = require 'gamestates.pause'
 Player = require 'entities.Player'
 Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
+FlyingObstacle = require 'entities.FlyingObstacle'
+
 generatePlatforms = require 'generatePlatforms'
 
 -- TODO(matija): make these constants written in caps.
@@ -48,6 +50,28 @@ function game:update(dt)
 
     player:update(dt, world, gravity)
     scanline:update(dt)
+
+    for i, e in ipairs(entities) do
+      if e.isFlyingObstacle then
+        e:update(dt, world)
+      end
+    end
+
+    -- Remove flying objects that went significantly left from the camera.
+    cameraX = camera:toWorldCoords(0, 0)
+    for i, e in ipairs(entities) do
+      if e.isFlyingObstacle then
+        if e.x < cameraX - love.graphics.getWidth() then
+          destroyFlyingObstacle(entities, world, e)
+        end
+      end
+    end
+
+    -- TODO: Make chance of flying obstacle proportional to time passed (dt), somehow.
+    if math.random(0, 1000) < 10 then
+      flyingObstacle = generateFlyingObstacle(entities, world)
+    end
+
 end
 
 function game:draw()
@@ -70,6 +94,33 @@ function game:draw()
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: xxx", 10, 10)
 
+end
+
+function generateFlyingObstacle(entities, world)
+  cameraX, cameraY = camera:toWorldCoords(0, 0)
+  local x = cameraX + love.graphics.getWidth() + 100
+  local y = math.random(cameraY, cameraY + love.graphics.getHeight())
+
+  flyingObstacle = FlyingObstacle(x, y)
+
+  table.insert(entities, flyingObstacle)
+  world:add(flyingObstacle, flyingObstacle:getRect())
+
+  return flyingObstacle
+end
+
+function destroyFlyingObstacle(entities, world, flyingObstacle)
+  table.remove(entities, tablefind(entities, flyingObstacle))
+  world:remove(flyingObstacle)
+end
+
+-- TODO(matija): put this in misc.
+function tablefind(tab, el)
+  for index, value in pairs(tab) do
+    if value == el then
+      return index
+    end
+  end
 end
 
 return game
