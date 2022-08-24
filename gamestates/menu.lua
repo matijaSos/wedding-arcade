@@ -13,6 +13,7 @@ function menu:enter()
 
     backgroundImg = love.graphics.newImage('assets/pixel_art_city.png')
     fillerBgImg = love.graphics.newImage('assets/sidewalk_and_sky.png')
+    balloonsBgImg = love.graphics.newImage('assets/balloons.png')
 
     -- Dancing subtitle text
     subtitleTextbox = Text.new('left',
@@ -47,6 +48,11 @@ function menu:draw()
         
         local xPosRight = (w - sideSpaceWidth) + i * fillerBgImg:getWidth()
         love.graphics.draw(fillerBgImg, xPosRight, yPos)
+    end
+
+    -- Add balloons on top
+    for i = 0, w / balloonsBgImg:getWidth() do
+        love.graphics.draw(balloonsBgImg, i * balloonsBgImg:getWidth(), 0)
     end
 
     -- Title
