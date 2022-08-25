@@ -13,7 +13,7 @@ generatePlatforms = require 'generatePlatforms'
 
 -- TODO(matija): make these constants written in caps.
 local tileSize = 16
-local gravity = 2100
+local gravity = 3000
 
 local game = {}
 
@@ -125,7 +125,7 @@ function updateFlyingObstacles(dt, world)
   end
 
   -- TODO: Make chance of flying obstacle proportional to time passed (dt), somehow.
-  if math.random(0, 1000) < 10 then
+  if math.random(0, 1000) < 15 then
     flyingObstacle = generateFlyingObstacle(world)
   end
 end

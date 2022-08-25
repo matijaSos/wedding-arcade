@@ -12,7 +12,7 @@ function Player:init(x, y)
     self.isCaught = false
 
     -- How fast player moves along the X axis. A constant for now.
-    self.xMovSpeed = 200
+    self.xMovSpeed = 300
 
     -- When player jumps, the initial speed he has.
     self.jumpingSpeed = 1100
@@ -20,14 +20,16 @@ function Player:init(x, y)
     self.yCurrVelocity = 0
     self.isGrounded = false
 
-    self.isJumpActive = false
+    -- Used for low jump.
+    self.isJumpDurationTracked = false
     self.jumpDuration = 0
+
+    -- Used for double jump.
+    self.doubleJumpAvailable = false
 
     -- TODO(matija): we don't want to have hardcoded scale factor. Maybe not even
     -- a scale factor at all, I should edit the image itself?
     Entity.init(self, x, y, self.img:getWidth()*0.1, self.img:getHeight()*0.1)
-    --Entity.init(self, x, y, 32, 32)
-
 end
 
 function Player:draw()
@@ -36,10 +38,12 @@ function Player:draw()
     -- TODO(matija): If I scale down img, I also need to scale down its width
     -- and height as I save it, otherwise collision engine doesn't work since it
     -- has wrong info.
-    love.graphics.draw(self.img, self.x, self.y, 0.1, 0.1)
+    love.graphics.draw(self.img, self.x, self.y, 0, 0.1, 0.1)
 
     --love.graphics.rectangle('line', self:getRect())
 end
+
+local wasJumpButtonDown = false
 
 function Player:update(dt, world, gravity)
     local jumpToPeakTime = self.jumpingSpeed / gravity
@@ -53,36 +57,46 @@ function Player:update(dt, world, gravity)
     if love.keyboard.isDown("left") then
         dx = -self.xMovSpeed * dt
     end
-    
+
     -- Apply gravity
-    if not self.isGrounded then
-        self.yCurrVelocity = self.yCurrVelocity + gravity * dt
+    self.yCurrVelocity = self.yCurrVelocity + gravity * dt
+
+    if love.keyboard.isDown('space') then
+      if wasJumpButtonDown == false then
+        if self.isGrounded then
+          -- Jump!
+            self.yCurrVelocity = -self.jumpingSpeed
+
+            self.isJumpDurationTracked = true
+            self.jumpDuration = 0
+        elseif self.doubleJumpAvailable == true then
+          -- Double jump (second half of it)!
+          self.yCurrVelocity = -self.jumpingSpeed
+          self.doubleJumpAvailable = false
+        end
+      end
+      wasJumpButtonDown = true
+    else
+      wasJumpButtonDown = false
     end
 
-    -- Initial jump - we assign max y velocity to the player
-    if love.keyboard.isDown('space') and self.isGrounded then
-        self.yCurrVelocity = -self.jumpingSpeed
-
-        self.isJumpActive = true
-        self.jumpDuration = 0
-    end
-
-    if self.isJumpActive then
+    if self.isJumpDurationTracked then
         self.jumpDuration = self.jumpDuration + dt
     end
 
     -- We catch the moment during jump when jump button is released.
-    if self.isJumpActive and not love.keyboard.isDown('space') then
-        if self.yCurrVelocity < 0 -- If going up
+    if self.isJumpDurationTracked and not love.keyboard.isDown('space') then
+        if self.yCurrVelocity < 0 -- If still going up
            -- NOTE(matija): if jump button was held for a very short time, we wait until it reaches
            -- certain threshold - this way we avoid jaggedness when jumping.
            and self.jumpDuration > jumpToPeakTime * 0.33 then
             self.yCurrVelocity = self.yCurrVelocity * 0.5
-            self.isJumpActive = false
+            self.isJumpDurationTracked = false
         end
 
-        if self.yCurrVelocity >= 0 then self.isJumpActive = false end
+        if self.yCurrVelocity >= 0 then self.isJumpDurationTracked = false end
     end
+
 
     dy = self.yCurrVelocity * dt
 
@@ -92,7 +106,6 @@ function Player:update(dt, world, gravity)
     local colFilter = function (item, other)
         if other.isScanline then return 'cross'
         end
-
         return 'slide'
     end
 
@@ -102,25 +115,24 @@ function Player:update(dt, world, gravity)
     -- him to start falling.
     -- TODO(matija): what about collectables, if they are in the air and player
     -- collects them? This won't work then.
-    if collLen == 0 then
-        self.isGrounded = false
-    end
-
+    self.isGrounded = false
     for i, coll in ipairs(collisions) do
+        -- If blocked from above (e.g. bumped head on smth when jumped).
         if coll.touch.y > goalY then
-            -- Couldn't go as high as wanted - blocked from above
-            -- (e.g. when jumping, bumped head in the platform above).
-            self.yCurrVelocity = 0
+          self.yCurrVelocity = 0
 
-        -- NOTE(matija): Checking normal is important because want player to keep
+        -- If blocked from below (e.g. fell on the ground).
+        -- NOTE(matija): Checking normal is important because we want player to keep
         -- falling if there was a side collision (e.g. against a wall). Normal
         -- will be -1 in case of the floor collision.
         elseif coll.normal.y < 0 then
-            -- Couldn't go as low as wanted - blocked from below (e.g. fell on the
-            -- ground).
-            self.isGrounded = true
-            self.yCurrVelocity = 0
+          self.isGrounded = true
+          self.yCurrVelocity = 0
         end
+    end
+
+    if self.isGrounded then
+      self.doubleJumpAvailable = true
     end
 
 end

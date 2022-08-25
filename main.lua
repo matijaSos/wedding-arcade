@@ -6,7 +6,7 @@ local gameOver = require 'gamestates.gameOver'
 
 function love.load()
     love.window.setFullscreen(true, 'desktop')
-    
+
     Gamestate.registerEvents()
     Gamestate.switch(menu)
 end
