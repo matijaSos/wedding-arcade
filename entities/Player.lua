@@ -20,6 +20,9 @@ function Player:init(x, y)
     self.yCurrVelocity = 0
     self.isGrounded = false
 
+    self.isJumpActive = false
+    self.jumpDuration = 0
+
     -- TODO(matija): we don't want to have hardcoded scale factor. Maybe not even
     -- a scale factor at all, I should edit the image itself?
     Entity.init(self, x, y, self.img:getWidth()*0.1, self.img:getHeight()*0.1)
@@ -39,6 +42,8 @@ function Player:draw()
 end
 
 function Player:update(dt, world, gravity)
+    local jumpToPeakTime = self.jumpingSpeed / gravity
+
     local dx = 0
     local dy = 0
 
@@ -54,9 +59,29 @@ function Player:update(dt, world, gravity)
         self.yCurrVelocity = self.yCurrVelocity + gravity * dt
     end
 
-    if love.keyboard.isDown('up', 'c', 'space') and self.isGrounded then
+    -- Initial jump - we assign max y velocity to the player
+    if love.keyboard.isDown('space') and self.isGrounded then
         self.yCurrVelocity = -self.jumpingSpeed
-        --self.isGrounded = false
+
+        self.isJumpActive = true
+        self.jumpDuration = 0
+    end
+
+    if self.isJumpActive then
+        self.jumpDuration = self.jumpDuration + dt
+    end
+
+    -- We catch the moment during jump when jump button is released.
+    if self.isJumpActive and not love.keyboard.isDown('space') then
+        if self.yCurrVelocity < 0 -- If going up
+           -- NOTE(matija): if jump button was held for a very short time, we wait until it reaches
+           -- certain threshold - this way we avoid jaggedness when jumping.
+           and self.jumpDuration > jumpToPeakTime * 0.33 then
+            self.yCurrVelocity = self.yCurrVelocity * 0.5
+            self.isJumpActive = false
+        end
+
+        if self.yCurrVelocity >= 0 then self.isJumpActive = false end
     end
 
     dy = self.yCurrVelocity * dt
