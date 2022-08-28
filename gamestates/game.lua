@@ -38,6 +38,7 @@ function game:enter()
     camera = Camera()
     camera:setFollowLerp(0.2)
     camera:setFollowStyle('PLATFORMER')
+    camera.scale = 2
 
     scanline = Scanline()
     platforms = generatePlatforms({x=0, y=400, width=100}, tileSize)
@@ -89,10 +90,12 @@ function game:draw()
 end
 
 function updatePlatforms(dt, world)
-  cameraX = camera:toWorldCoords(0, 0)
+  cameraLeftEdgeAsWorldX = camera:toWorldCoords(0, 0)
+  cameraRightEdgeAsWorldX = camera:toWorldCoords(camera.w, 0)
+  cameraWidthAsWorldDx = cameraRightEdgeAsWorldX - cameraLeftEdgeAsWorldX
 
   -- If reaching the end of generated platforms, generate more platforms.
-  if platforms[#platforms].x < cameraX + love.graphics.getWidth()*2 then
+  if platforms[#platforms].x < cameraRightEdgeAsWorldX + cameraWidthAsWorldDx then
     local lastPlatform = platforms[#platforms]
     local newPlatforms = generatePlatforms({x=lastPlatform.x, y=lastPlatform.y, width=lastPlatform.w}, tileSize)
     platforms = concatTables(platforms, newPlatforms)
@@ -103,7 +106,7 @@ function updatePlatforms(dt, world)
 
   -- Remove platforms that are significantly behind the scanline and will never be visible again.
   for i, p in ipairs(platforms) do
-    if p.x + p.w < scanline.x - love.graphics.getWidth() then
+    if p.x + p.w < scanline.x - cameraWidthAsWorldDx then
       table.remove(platforms, tablefind(platforms, p))
       world:remove(p)
     end
@@ -111,15 +114,18 @@ function updatePlatforms(dt, world)
 end
 
 function updateFlyingObstacles(dt, world)
-  cameraX = camera:toWorldCoords(0, 0)
+  -- TODO: This is duplicated from updatePlatforms, take care of this duplication.
+  cameraLeftEdgeAsWorldX = camera:toWorldCoords(0, 0)
+  cameraRightEdgeAsWorldX = camera:toWorldCoords(camera.w, 0)
+  cameraWidthAsWorldDx = cameraRightEdgeAsWorldX - cameraLeftEdgeAsWorldX
 
   for i, fo in ipairs(flyingObstacles) do
     fo:update(dt, world)
   end
 
-  -- Remove flying objects that went significantly left from the camera.
+  -- Remove flying objects that went significantly behind the scanline and will never be visible again.
   for i, fo in ipairs(flyingObstacles) do
-    if fo.x < cameraX - love.graphics.getWidth() then
+    if fo.x < scanline.x - cameraWidthAsWorldDx then
       destroyFlyingObstacle(world, fo)
     end
   end
@@ -131,9 +137,13 @@ function updateFlyingObstacles(dt, world)
 end
 
 function generateFlyingObstacle(world)
-  cameraX, cameraY = camera:toWorldCoords(0, 0)
-  local x = cameraX + love.graphics.getWidth() + 100
-  local y = math.random(cameraY, cameraY + love.graphics.getHeight())
+  -- TODO: This is duplicated from updatePlatforms, take care of this duplication.
+  cameraLeftEdgeAsWorldX, cameraTopEdgeAsWorldY = camera:toWorldCoords(0, 0)
+  cameraRightEdgeAsWorldX, cameraBottomEdgeAsWorldY = camera:toWorldCoords(camera.w, camera.h)
+  cameraWidthAsWorldDx = cameraRightEdgeAsWorldX - cameraLeftEdgeAsWorldX
+
+  local x = cameraRightEdgeAsWorldX + 100
+  local y = math.random(cameraTopEdgeAsWorldY, cameraBottomEdgeAsWorldY)
 
   flyingObstacle = FlyingObstacle(x, y)
 

@@ -17,7 +17,7 @@ local generatePlatforms = function (lastPlatform, tileSize)
     local maxXDist = 200
 
     local minYDist = 50
-    local maxYDist = 150
+    local maxYDist = 200
 
     local platforms = {}
 
