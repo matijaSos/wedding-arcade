@@ -83,7 +83,7 @@ function game:draw()
     love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: xxx", 10, 10)
-    love.graphics.print('isJumpActive: ' .. tostring(player.isJumpActive), 10, 30)
+    love.graphics.print('isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 30)
     love.graphics.print('jumpDuration: ' .. tostring(player.jumpDuration), 10, 50)
 
 end
