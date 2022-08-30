@@ -15,6 +15,8 @@ function menuSelectPlayer:enter()
     hrvojeImg = love.graphics.newImage('assets/player_hrvoje.png')
     ninaImg = love.graphics.newImage('assets/player_hrvoje.png')
     ziziImg = love.graphics.newImage('assets/player_hrvoje.png')
+
+    selectionPointer = love.graphics.newImage('assets/red_arrow.png')
 end
 
 function menuSelectPlayer:update(dt)
@@ -64,6 +66,14 @@ function drawPlayerAndName (img, scaleFactor, imgX, imgY, name, nameY)
     love.graphics.draw(nameText,
         imgX + img:getWidth() * scaleFactor / 2 - nameText:getWidth() / 2,
         nameY
+    )
+
+    love.graphics.setColor(1, 1, 1)
+    local pointerScaleFactor = 0.15
+    love.graphics.draw(selectionPointer,
+        imgX + img:getWidth() * scaleFactor / 2 - selectionPointer:getWidth() * pointerScaleFactor / 2,
+        imgY - selectionPointer:getHeight() * pointerScaleFactor - 20,
+        0, pointerScaleFactor, pointerScaleFactor
     )
 
 end
