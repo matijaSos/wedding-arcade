@@ -4,30 +4,29 @@ local game = require 'gamestates.game'
 
 local menuSelectPlayer = {}
 
+-- TODO(matija): extract players info in a separate file.
 local HRVOJE = 'hrvoje'
 local NINA = 'nina'
 local ZIZI = 'zizi'
-local availablePlayers = { HRVOJE, NINA, ZIZI }
+-- TODO(matija): derive this list from the table below.
+local availablePlayersList = { HRVOJE, NINA, ZIZI }
 
--- TODO(matija): use this.
-local avPlayers = {
-    {
-        name = HRVOJE,
-        scaleFactorInMenu = 0.4,
-        imgPath = 'assets/player_hrvoje.png'
-    },
-    {
-        name = NINA, 
-        scaleFactorInMenu = 0.4,
-        imgPath = 'assets/player_nina.png'
-    },
-    {
-        name = ZIZI,
-        scaleFactorInMenu = 0.35,
-        imgPath = 'assets/player_zizi.png'
-    }
+local availablePlayers = {}
+availablePlayers[HRVOJE] = {
+    name = HRVOJE,
+    scaleFactorInMenu = 0.4,
+    imgPath = 'assets/player_hrvoje.png'
 }
-
+availablePlayers[NINA] = {
+    name = NINA, 
+    scaleFactorInMenu = 0.4,
+    imgPath = 'assets/player_nina.png'
+}
+availablePlayers[ZIZI] = {
+    name = ZIZI,
+    scaleFactorInMenu = 0.35,
+    imgPath = 'assets/player_zizi.png'
+}
 
 selectedPlayerIdx = 1
 
@@ -39,9 +38,9 @@ function menuSelectPlayer:enter()
 
     bgAssets = drawBg.loadMenuBgAssets()
 
-    hrvojeImg = love.graphics.newImage('assets/player_hrvoje.png')
-    ninaImg = love.graphics.newImage('assets/player_nina.png')
-    ziziImg = love.graphics.newImage('assets/player_zizi.png')
+    hrvojeImg = love.graphics.newImage(availablePlayers[HRVOJE].imgPath)
+    ninaImg = love.graphics.newImage(availablePlayers[NINA].imgPath)
+    ziziImg = love.graphics.newImage(availablePlayers[ZIZI].imgPath)
 
     selectionPointer = love.graphics.newImage('assets/red_arrow.png')
 end
@@ -59,7 +58,7 @@ function menuSelectPlayer:draw()
     love.graphics.printf('Choose your koom:', 0, h/4, w, 'center')
 
      -- Draw 3 choices - Hrvoje, Zizi, Nina
-    local hrvojeScaleFactor = 0.4
+    local hrvojeScaleFactor = availablePlayers[HRVOJE].scaleFactorInMenu
     -- TODO(matija): have a smarter way of determining this value?
     local playerNameY = h/2 + 150
     local spaceBetween = (w - 3 * hrvojeImg:getWidth() * hrvojeScaleFactor) / 4
@@ -67,19 +66,28 @@ function menuSelectPlayer:draw()
     -- Draw Hrvoje
     local hrvojeX = spaceBetween
     local hrvojeY = h/2 - hrvojeImg:getHeight() * hrvojeScaleFactor / 2 
-    drawPlayerAndName(hrvojeImg, hrvojeScaleFactor, hrvojeX, hrvojeY, "Hrvoje", playerNameY, availablePlayers[selectedPlayerIdx] == HRVOJE)
+    drawPlayerAndName(hrvojeImg, hrvojeScaleFactor, hrvojeX, hrvojeY,
+        HRVOJE, playerNameY,
+        availablePlayersList[selectedPlayerIdx] == HRVOJE
+    )
 
     -- Draw Nina
-    local ninaScaleFactor = 0.4
+    local ninaScaleFactor = availablePlayers[NINA].scaleFactorInMenu
     local ninaX = spaceBetween * 2 + hrvojeImg:getWidth() * hrvojeScaleFactor 
     local ninaY = h/2 - ninaImg:getHeight() * ninaScaleFactor / 2
-    drawPlayerAndName(ninaImg, ninaScaleFactor, ninaX, ninaY, "Nina", playerNameY, availablePlayers[selectedPlayerIdx] == NINA)
+    drawPlayerAndName(ninaImg, ninaScaleFactor, ninaX, ninaY,
+        NINA, playerNameY,
+        availablePlayersList[selectedPlayerIdx] == NINA
+    )
 
     -- Draw Zizi
-    local ziziScaleFactor = 0.35
+    local ziziScaleFactor = availablePlayers[ZIZI].scaleFactorInMenu
     local ziziX = spaceBetween * 3 + hrvojeImg:getWidth() * hrvojeScaleFactor + ninaImg:getWidth() * ninaScaleFactor
     local ziziY = h/2 - ziziImg:getHeight() * ziziScaleFactor / 2
-    drawPlayerAndName(ziziImg, ziziScaleFactor, ziziX, ziziY, "Zizi", playerNameY, availablePlayers[selectedPlayerIdx] == ZIZI)
+    drawPlayerAndName(ziziImg, ziziScaleFactor, ziziX, ziziY,
+        ZIZI, playerNameY,
+        availablePlayersList[selectedPlayerIdx] == ZIZI
+    )
 end
 
 function drawPlayerAndName (img, scaleFactor, imgX, imgY, name, nameY, isSelected)
@@ -110,7 +118,7 @@ end
 
 function menuSelectPlayer:keypressed(key)
     if key == 'space' then
-        return Gamestate.switch(game, avPlayers[selectedPlayerIdx])
+        return Gamestate.switch(game, availablePlayers[availablePlayersList[selectedPlayerIdx]])
     end
     if key == 'right' then
         selectedPlayerIdx = selectedPlayerIdx + 1
