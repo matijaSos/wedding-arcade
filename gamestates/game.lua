@@ -9,6 +9,7 @@ Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
 
+misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
 
 -- TODO(matija): make these constants written in caps.
@@ -18,8 +19,8 @@ local gravity = 3000
 local game = {}
 
 function getAllEntities()
-  return concatTables(
-    concatTables(
+  return misc.concatTables(
+    misc.concatTables(
       {player, scanline},
       platforms
     ),
@@ -27,7 +28,7 @@ function getAllEntities()
   )
 end
 
-function game:enter()
+function game:enter(oldState, playerConfig)
     math.randomseed( os.time() )
 
     love.graphics.setBackgroundColor(1, 1, 1)
@@ -41,7 +42,7 @@ function game:enter()
 
     scanline = Scanline()
     platforms = generatePlatforms({x=0, y=400, width=100}, tileSize)
-    player = Player(platforms[1].x, platforms[1].y)
+    player = Player(platforms[1].x, platforms[1].y, playerConfig)
     flyingObstacles = {}
 
     for i, e in ipairs(getAllEntities()) do
@@ -95,7 +96,7 @@ function updatePlatforms(dt, world)
   if platforms[#platforms].x < cameraX + love.graphics.getWidth()*2 then
     local lastPlatform = platforms[#platforms]
     local newPlatforms = generatePlatforms({x=lastPlatform.x, y=lastPlatform.y, width=lastPlatform.w}, tileSize)
-    platforms = concatTables(platforms, newPlatforms)
+    platforms = misc.concatTables(platforms, newPlatforms)
     for i, e in ipairs(newPlatforms) do
       world:add(e, e:getRect())
     end
@@ -104,7 +105,7 @@ function updatePlatforms(dt, world)
   -- Remove platforms that are significantly behind the scanline and will never be visible again.
   for i, p in ipairs(platforms) do
     if p.x + p.w < scanline.x - love.graphics.getWidth() then
-      table.remove(platforms, tablefind(platforms, p))
+      table.remove(platforms, misc.tablefind(platforms, p))
       world:remove(p)
     end
   end
@@ -144,25 +145,8 @@ function generateFlyingObstacle(world)
 end
 
 function destroyFlyingObstacle(world, flyingObstacle)
-  table.remove(flyingObstacles, tablefind(flyingObstacles, flyingObstacle))
+  table.remove(flyingObstacles, misc.tablefind(flyingObstacles, flyingObstacle))
   world:remove(flyingObstacle)
-end
-
--- TODO(matija): put this in misc.
-function tablefind(tab, el)
-  for index, value in pairs(tab) do
-    if value == el then
-      return index
-    end
-  end
-end
-
-function concatTables(t1, t2)
-  local t3 = {unpack(t1)}
-  for i=1,#t2 do
-    t3[#t3+1] = t2[i]
-  end
-  return t3
 end
 
 return game

@@ -5,9 +5,9 @@ local Player = Class{
     __includes = Entity
 }
 
-function Player:init(x, y)
+function Player:init(x, y, playerConfig)
     self.isPlayer = true
-    self.img = love.graphics.newImage('assets/player_hrvoje.png')
+    self.img = love.graphics.newImage(playerConfig.imgPath)
 
     self.isCaught = false
 

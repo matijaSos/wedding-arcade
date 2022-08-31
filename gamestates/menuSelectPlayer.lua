@@ -9,6 +9,26 @@ local NINA = 'nina'
 local ZIZI = 'zizi'
 local availablePlayers = { HRVOJE, NINA, ZIZI }
 
+-- TODO(matija): use this.
+local avPlayers = {
+    {
+        name = HRVOJE,
+        scaleFactorInMenu = 0.4,
+        imgPath = 'assets/player_hrvoje.png'
+    },
+    {
+        name = NINA, 
+        scaleFactorInMenu = 0.4,
+        imgPath = 'assets/player_nina.png'
+    },
+    {
+        name = ZIZI,
+        scaleFactorInMenu = 0.35,
+        imgPath = 'assets/player_zizi.png'
+    }
+}
+
+
 selectedPlayerIdx = 1
 
 function menuSelectPlayer:enter()
@@ -90,7 +110,7 @@ end
 
 function menuSelectPlayer:keypressed(key)
     if key == 'space' then
-        return Gamestate.switch(game)
+        return Gamestate.switch(game, avPlayers[selectedPlayerIdx])
     end
     if key == 'right' then
         selectedPlayerIdx = selectedPlayerIdx + 1
