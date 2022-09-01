@@ -5,6 +5,8 @@ local Player = Class{
     __includes = Entity
 }
 
+local PLAYER_X_MOV_SPEED_DEFAULT = 300
+
 function Player:init(x, y, playerConfig)
     self.isPlayer = true
     self.img = love.graphics.newImage(playerConfig.imgPath)
@@ -12,7 +14,8 @@ function Player:init(x, y, playerConfig)
     self.isCaught = false
 
     -- How fast player moves along the X axis. A constant for now.
-    self.xMovSpeed = 300
+    self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT
+    self.secondsLeftTillXMovSpeedRecovery = 0
 
     -- When player jumps, the initial speed he has.
     self.jumpingSpeed = 1100
@@ -46,6 +49,11 @@ end
 local wasJumpButtonDown = false
 
 function Player:update(dt, world, gravity)
+    self.secondsLeftTillXMovSpeedRecovery = math.max(self.secondsLeftTillXMovSpeedRecovery - dt, 0)
+    if not (self.secondsLeftTillXMovSpeedRecovery > 0) then
+      self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT
+    end
+
     local jumpToPeakTime = self.jumpingSpeed / gravity
 
     local dx = 0
@@ -104,7 +112,14 @@ function Player:update(dt, world, gravity)
     local goalY = self.y + dy
 
     local colFilter = function (item, other)
-        if other.isScanline then return 'cross'
+        if other.isScanline then return 'cross' end
+        if other.isCollectable then
+          if other.isBrandy then
+            self.xMovSpeed = 150
+            self.secondsLeftTillXMovSpeedRecovery = 3
+          end
+          other:collect()
+          return 'cross'
         end
         return 'slide'
     end

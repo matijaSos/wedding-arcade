@@ -6,7 +6,8 @@ local Platform = Class{
 }
 
 function Platform:init(x, y, w, h)
-    Entity.init(self, x, y, w, h)
+  self.isPlatform = true
+  Entity.init(self, x, y, w, h)
 end
 
 function Platform:draw()

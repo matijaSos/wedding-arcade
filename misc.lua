@@ -17,4 +17,20 @@ lib.concatTables = function (t1, t2)
   return t3
 end
 
+lib.addToTable = function (t1, t2)
+  for i=1,#t2 do
+    t1[#t1+1] = t2[i]
+  end
+end
+
+lib.filterArray = function (array, p)
+  local filtered = {}
+  for k, v in ipairs(array) do
+    if p(v) then
+      table.insert(filtered, v)
+    end
+  end
+  return filtered
+end
+
 return lib
