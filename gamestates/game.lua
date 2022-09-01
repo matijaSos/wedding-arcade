@@ -8,6 +8,7 @@ Player = require 'entities.Player'
 Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
+Brandy = require 'entities.Brandy'
 
 misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
@@ -16,17 +17,11 @@ generatePlatforms = require 'generatePlatforms'
 local tileSize = 16
 local gravity = 3000
 
-local game = {}
+local scanline = nil
+local player = nil
+local game ={}
+local entities = {}
 
-function getAllEntities()
-  return misc.concatTables(
-    misc.concatTables(
-      {player, scanline},
-      platforms
-    ),
-    flyingObstacles
-  )
-end
 
 function game:enter(oldState, playerConfig)
     math.randomseed( os.time() )
@@ -41,13 +36,13 @@ function game:enter(oldState, playerConfig)
     camera:setFollowStyle('PLATFORMER')
 
     scanline = Scanline()
-    platforms = generatePlatforms({x=0, y=400, width=100}, tileSize)
-    player = Player(platforms[1].x, platforms[1].y, playerConfig)
-    flyingObstacles = {}
+    addEntity(scanline)
 
-    for i, e in ipairs(getAllEntities()) do
-      world:add(e, e:getRect())
-    end
+    local platforms = generatePlatforms({x=0, y=400, width=100}, tileSize)
+    addEntities(platforms)
+
+    player = Player(platforms[1].x, platforms[1].y, playerConfig)
+    addEntity(player)
 end
 
 function game:update(dt)
@@ -58,17 +53,27 @@ function game:update(dt)
     camera:update(dt)
     camera:follow(player.x, player.y)
 
-    player:update(dt, world, gravity)
-    scanline:update(dt)
-    updatePlatforms(dt, world)
-    updateFlyingObstacles(dt, world)
+    for i, e in ipairs(entities) do
+      e:update(dt, world, gravity)
+    end
+
+    -- Destroy any entities that have gone far beyond the scanline.
+    for i, e in ipairs(entities) do
+      if e.x + e.w < scanline.x - love.graphics.getWidth() then
+        destroyEntity(e)
+      end
+    end
+
+    generateNewPlatformsIfNeeded()
+    maybeGenerateNewFlyingObstacle(dt)
+    maybeGenerateNewCollectables(dt)
 end
 
 function game:draw()
     camera:attach()
 
-    for i, e in ipairs(getAllEntities()) do
-        e:draw()
+    for i, e in ipairs(entities) do
+      e:draw()
     end
 
     -- For debugging/testing.
@@ -84,69 +89,91 @@ function game:draw()
     love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: xxx", 10, 10)
-    love.graphics.print('isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 30)
+    love.graphics.print(
+      'isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 30
+    )
     love.graphics.print('jumpDuration: ' .. tostring(player.jumpDuration), 10, 50)
-
 end
 
-function updatePlatforms(dt, world)
-  cameraX = camera:toWorldCoords(0, 0)
+function addEntity(e)
+  table.insert(entities, e)
+  world:add(e, e:getRect())
+end
 
+function destroyEntity(entity)
+  table.remove(entities, misc.tablefind(entities, entity))
+  world:remove(entity)
+end
+
+function addEntities(newEntities)
+  for k, e in ipairs(newEntities) do addEntity(e) end
+end
+function filterEntities(p)
+  return misc.filterArray(entities, p)
+end
+
+function getPlatforms()
+  return filterEntities(function (e) return e.isPlatform end)
+end
+
+function getFlyingObstacles()
+  return filterEntities(function (e) return e.isFlyingObstacle end)
+end
+
+function getCollectables()
+  return filterEntities(function (e) return e.isCollectable end)
+end
+
+function generateNewPlatformsIfNeeded()
+  local cameraX = camera:toWorldCoords(0, 0)
+
+  local platforms = getPlatforms()
+  local lastPlatform = platforms[#platforms]
   -- If reaching the end of generated platforms, generate more platforms.
-  if platforms[#platforms].x < cameraX + love.graphics.getWidth()*2 then
-    local lastPlatform = platforms[#platforms]
-    local newPlatforms = generatePlatforms({x=lastPlatform.x, y=lastPlatform.y, width=lastPlatform.w}, tileSize)
-    platforms = misc.concatTables(platforms, newPlatforms)
-    for i, e in ipairs(newPlatforms) do
-      world:add(e, e:getRect())
-    end
-  end
-
-  -- Remove platforms that are significantly behind the scanline and will never be visible again.
-  for i, p in ipairs(platforms) do
-    if p.x + p.w < scanline.x - love.graphics.getWidth() then
-      table.remove(platforms, misc.tablefind(platforms, p))
-      world:remove(p)
-    end
+  if lastPlatform and lastPlatform.x < cameraX + love.graphics.getWidth()*2 then
+    local newPlatforms = generatePlatforms(
+      {x=lastPlatform.x, y=lastPlatform.y, width=lastPlatform.w},
+      tileSize
+    )
+    addEntities(newPlatforms)
   end
 end
 
-function updateFlyingObstacles(dt, world)
-  cameraX = camera:toWorldCoords(0, 0)
-
-  for i, fo in ipairs(flyingObstacles) do
-    fo:update(dt, world)
-  end
-
-  -- Remove flying objects that went significantly left from the camera.
-  for i, fo in ipairs(flyingObstacles) do
-    if fo.x < cameraX - love.graphics.getWidth() then
-      destroyFlyingObstacle(world, fo)
-    end
-  end
-
+function maybeGenerateNewFlyingObstacle(dt)
   -- TODO: Make chance of flying obstacle proportional to time passed (dt), somehow.
   if math.random(0, 1000) < 15 then
-    flyingObstacle = generateFlyingObstacle(world)
+    local cameraX, cameraY = camera:toWorldCoords(0, 0)
+    local x = cameraX + love.graphics.getWidth() + 100
+    local y = math.random(cameraY, cameraY + love.graphics.getHeight())
+    addEntity(FlyingObstacle(x, y))
   end
 end
 
-function generateFlyingObstacle(world)
-  cameraX, cameraY = camera:toWorldCoords(0, 0)
-  local x = cameraX + love.graphics.getWidth() + 100
-  local y = math.random(cameraY, cameraY + love.graphics.getHeight())
-
-  flyingObstacle = FlyingObstacle(x, y)
-
-  table.insert(flyingObstacles, flyingObstacle)
-  world:add(flyingObstacle, flyingObstacle:getRect())
-
-  return flyingObstacle
+function maybeGenerateNewCollectables(dt)
+  -- TODO: Make chance of collectable proportional to time passed (dt), somehow.
+  if math.random(0, 1000) < 5 then
+    generateBrandy()
+  end
 end
 
-function destroyFlyingObstacle(world, flyingObstacle)
-  table.remove(flyingObstacles, misc.tablefind(flyingObstacles, flyingObstacle))
-  world:remove(flyingObstacle)
+local lastPlatformWithBrandy = nil
+function generateBrandy()
+  local cameraX, cameraY = camera:toWorldCoords(0, 0)
+  local minX = cameraX + love.graphics.getWidth() + 100
+
+  local platforms = getPlatforms()
+  local platform = nil
+  for i, p in ipairs(platforms) do
+    if p.x > minX then platform = p break end
+  end
+
+  if not (platform == nil or lastPlatformWithBrandy == platform) then
+    -- TODO: 40 is now hardcoded! Get the number from Brandy somehow, based on Brandies height?
+    local y = platform.y - 40
+    local x = math.random(platform.x, platform.x + platform.w)
+    addEntity(Brandy(x, y))
+    lastPlatformWithBrandy = platform
+  end
 end
 
 return game
