@@ -1,7 +1,7 @@
-Gamestate = require 'libs.hump.gamestate'
-Text = require 'libs.sysl-text.example.library.slog-text'
+local Gamestate = require 'libs.hump.gamestate'
+local Text = require 'libs.sysl-text.example.library.slog-text'
 
-drawBg = require 'drawMenuBackground'
+local drawBg = require 'drawMenuBackground'
 
 local game = require 'gamestates.game'
 local menuSelectPlayer = require 'gamestates.menuSelectPlayer'

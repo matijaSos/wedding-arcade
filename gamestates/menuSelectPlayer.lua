@@ -1,14 +1,15 @@
-Gamestate = require 'libs.hump.gamestate'
+local Gamestate = require 'libs.hump.gamestate'
 
+local drawBg = require 'drawMenuBackground'
 local game = require 'gamestates.game'
 
 local menuSelectPlayer = {}
 
 -- TODO(matija): extract players info in a separate file.
-local HRVOJE = 'hrvoje'
-local NINA = 'nina'
-local ZIZI = 'zizi'
--- TODO(matija): derive this list from the table below.
+local HRVOJE = 'Hrvoje'
+local NINA = 'Nina'
+local ZIZI = 'Zizi'
+-- TODO(matija): derive this list from the table below, via lume.keys()
 local availablePlayersList = { HRVOJE, NINA, ZIZI }
 
 local availablePlayers = {}
@@ -28,9 +29,11 @@ availablePlayers[ZIZI] = {
     imgPath = 'assets/player_zizi.png'
 }
 
-local selectedPlayerIdx = 1
+local selectedPlayerIdx
 
 function menuSelectPlayer:enter()
+    selectedPlayerIdx = 1
+
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
 
     titleFont = love.graphics.newFont(pixelFontPath, 110)

@@ -1,19 +1,26 @@
-Gamestate = require 'libs.hump.gamestate'
-lume = require 'libs.lume.lume'
-highscore = require 'libs.sick'
+local Gamestate = require 'libs.hump.gamestate'
+local lume = require 'libs.lume.lume'
+local highscore = require 'libs.sick'
+
+-- NOTE(matija): not importing it here but it rather comes from global in
+-- main.lua, otherwise I get a circular dependency -> I am not happy with this.
+-- local menu = require 'gamestates.menu'
 
 local gameOver = {}
+
 local scoreAchieved
 
 local SAVE = 'Save'
-local RESET = 'Reset'
+local RESTART = 'Restart'
 
-local buttons = { SAVE, RESET }
-local selectedButtonIdx = 1
+local buttons = { SAVE, RESTART }
+local selectedButtonIdx
 
 function gameOver:enter(from, score)
     self.from = from -- record previous state
     scoreAchieved = score
+
+    selectedButtonIdx = 1
 
     -- TODO(matija): implement functionality which performs this check.
     positionAchieved = 5
@@ -60,7 +67,7 @@ function gameOver:draw()
     end
 
     local resetButtonX = w/2 + buttonHalfDist
-    if buttons[selectedButtonIdx] == RESET then
+    if buttons[selectedButtonIdx] == RESTART then
         resetButtonX = resetButtonX -
             love.graphics.newText(subtitleFont, '> '):getWidth()
     end
@@ -71,7 +78,7 @@ function gameOver:draw()
     )
     local resetButtonText = love.graphics.newText(
         subtitleFont,
-        getButtonText(RESET, buttons[selectedButtonIdx] == RESET)
+        getButtonText(RESTART, buttons[selectedButtonIdx] == RESTART)
     )
 
     love.graphics.draw(saveButtonText, saveButtonX, buttonY)
@@ -101,6 +108,14 @@ function getButtonText (text, isSelected)
 end
 
 function gameOver:keypressed(key)
+    if key == 'space' then
+        if buttons[selectedButtonIdx] == RESTART then
+            -- TODO(matija): is it ok to do switch here, given this gamestate
+            -- came here via push()? Are we continuously building a stack of
+            -- gamestates, with each new game?
+            Gamestate.switch(menu)
+        end
+    end
     if key == 'right' then
         selectedButtonIdx = selectedButtonIdx + 1
         if selectedButtonIdx > #buttons then selectedButtonIdx = 1 end
