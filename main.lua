@@ -1,9 +1,7 @@
 local Gamestate = require 'libs.hump.gamestate'
 local highscore = require 'libs.sick'
 
--- TODO(matija): exposing this as a global variable, otherwise I get a circular
--- dependency in gameOver.lua
-menu = require 'gamestates.menu'
+local menu = require 'gamestates.menu'
 
 function love.load()
     highscore.set('highscore.txt', 5)

@@ -2,10 +2,6 @@ local Gamestate = require 'libs.hump.gamestate'
 local lume = require 'libs.lume.lume'
 local highscore = require 'libs.sick'
 
--- NOTE(matija): not importing it here but it rather comes from global in
--- main.lua, otherwise I get a circular dependency -> I am not happy with this.
--- local menu = require 'gamestates.menu'
-
 local gameOver = {}
 
 local scoreAchieved
@@ -113,7 +109,10 @@ function gameOver:keypressed(key)
             -- TODO(matija): is it ok to do switch here, given this gamestate
             -- came here via push()? Are we continuously building a stack of
             -- gamestates, with each new game?
+            local menu = require 'gamestates.menu'
             Gamestate.switch(menu)
+        elseif buttons[selectedButtonIdx] == SAVE then
+
         end
     end
     if key == 'right' then
