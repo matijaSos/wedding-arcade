@@ -10,7 +10,7 @@ function Scanline:init()
 
     self.xMovSpeed = 225
 
-    Entity.init(self, -300, -100, 1, 2000)
+    Entity.init(self, -300, -1000, 1, 3000)
 end
 
 function Scanline:draw()

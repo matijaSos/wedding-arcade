@@ -6,7 +6,8 @@ local menu = require 'gamestates.menu'
 function love.load()
     highscore.set('highscore.txt', 10)
 
-    love.window.setFullscreen(true, 'desktop')
+    -- love.window.setFullscreen(true, 'desktop')
+    love.window.setMode(1920, 1080)
 
     Gamestate.registerEvents()
     Gamestate.switch(menu)

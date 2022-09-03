@@ -10,6 +10,7 @@ Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
 Brandy = require 'entities.Brandy'
+Musician = require 'entities.Musician'
 
 misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
@@ -54,6 +55,17 @@ function game:enter(oldState, playerConfig)
     -- Initialize score count
     score = 0
     startingX = platforms[1].x
+
+    local musicians = {
+      Musician(scanline, 200, 1, 150, 200),
+      Musician(scanline, 400, -1, 150, 300),
+      Musician(scanline, 500, -1, 100, 250),
+      Musician(scanline, 600, 1, 100, 300),
+      Musician(scanline, 650, 1, 200, 200),
+      Musician(scanline, 800, 1, 200, 300),
+      Musician(scanline, 900, -1, 150, 250)
+    }
+    addEntities(musicians)
 end
 
 function game:update(dt)
