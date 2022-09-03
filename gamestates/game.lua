@@ -9,6 +9,7 @@ Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
 Brandy = require 'entities.Brandy'
+Musician = require 'entities.Musician'
 
 misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
@@ -43,6 +44,11 @@ function game:enter(oldState, playerConfig)
 
     player = Player(platforms[1].x, platforms[1].y, playerConfig)
     addEntity(player)
+
+    local musician1 = Musician(scanline, 100, 1, 200)
+    local musician2 = Musician(scanline, 500, -1, 300)
+    addEntity(musician1)
+    addEntity(musician2)
 end
 
 function game:update(dt)
