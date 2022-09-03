@@ -2,6 +2,8 @@ local Gamestate = require 'libs.hump.gamestate'
 local highscore = require 'libs.sick'
 
 local menu = require 'gamestates.menu'
+-- TODO(matija): remove this, for testing only
+local saveScore = require 'gamestates.saveScore'
 
 function love.load()
     highscore.set('highscore.txt', 5)
@@ -9,7 +11,7 @@ function love.load()
     love.window.setFullscreen(true, 'desktop')
 
     Gamestate.registerEvents()
-    Gamestate.switch(menu)
+    Gamestate.switch(saveScore)
 end
 
 function love.quit()

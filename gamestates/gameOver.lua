@@ -2,8 +2,11 @@ local Gamestate = require 'libs.hump.gamestate'
 local lume = require 'libs.lume.lume'
 local highscore = require 'libs.sick'
 
+local saveScore = require 'gamestates.saveScore'
+
 local gameOver = {}
 
+-- TODO(matija): put this into self.score?
 local scoreAchieved
 
 local SAVE = 'Save'
@@ -26,7 +29,7 @@ function gameOver:enter(from, score)
     titleFont = love.graphics.newFont(pixelFontPath, 120)
     subtitleFont = love.graphics.newFont(pixelFontPath, 80)
 
-    highscore.add('matija', score)
+    --highscore.add('matija', score)
 end
 
 function gameOver:draw()
@@ -106,13 +109,13 @@ end
 function gameOver:keypressed(key)
     if key == 'space' then
         if buttons[selectedButtonIdx] == RESTART then
+            local menu = require 'gamestates.menu'
             -- TODO(matija): is it ok to do switch here, given this gamestate
             -- came here via push()? Are we continuously building a stack of
             -- gamestates, with each new game?
-            local menu = require 'gamestates.menu'
             Gamestate.switch(menu)
         elseif buttons[selectedButtonIdx] == SAVE then
-
+            Gamestate.switch(saveScore)
         end
     end
     if key == 'right' then
