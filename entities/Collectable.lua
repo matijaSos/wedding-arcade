@@ -7,6 +7,7 @@ local Collectable = Class{
 
 function Collectable:init(x, y, img, imgScaling)
   self.isCollectable = true
+  self.hasBeenCollected = false
   self.img = img
   self.imgScaling = imgScaling
 
@@ -27,6 +28,10 @@ function Collectable:draw()
     0,
     self.imgScaling, self.imgScaling
   )
+end
+
+function Collectable:collect()
+  self.hasBeenCollected = true
 end
 
 function Collectable:update(dt, world)

@@ -64,6 +64,12 @@ function game:update(dt)
       end
     end
 
+    -- Destroy any collectables that have been collected.
+    local collectables = getCollectables()
+    for i, c in ipairs(collectables) do
+      if c.hasBeenCollected then destroyEntity(c) end
+    end
+
     generateNewPlatformsIfNeeded()
     maybeGenerateNewFlyingObstacle(dt)
     maybeGenerateNewCollectables(dt)

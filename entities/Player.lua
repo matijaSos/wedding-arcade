@@ -118,7 +118,7 @@ function Player:update(dt, world, gravity)
             self.xMovSpeed = 150
             self.secondsLeftTillXMovSpeedRecovery = 3
           end
-          -- TODO: destroy the collectible/brandy!
+          other:collect()
           return 'cross'
         end
         return 'slide'
