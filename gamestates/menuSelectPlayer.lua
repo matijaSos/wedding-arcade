@@ -28,7 +28,7 @@ availablePlayers[ZIZI] = {
     imgPath = 'assets/player_zizi.png'
 }
 
-selectedPlayerIdx = 1
+local selectedPlayerIdx = 1
 
 function menuSelectPlayer:enter()
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
