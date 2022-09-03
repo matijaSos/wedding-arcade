@@ -1,12 +1,22 @@
+local misc = require 'misc'
+local highscore = require 'libs.sick'
 
 local saveScore = {}
+
+local DEL, END = 'DEL', 'END'
+
+local kb = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+    'U', 'W', 'X', 'Y', 'Z', DEL, END
+}
 
 function saveScore:enter(from, score)
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
     self.kbFont = love.graphics.newFont(pixelFontPath, 80)
     self.titleFont = love.graphics.newFont(pixelFontPath, 100)
 
-    self.score = 123
+    self.score = score
     self.positionAchieved = 3
     self.selectedChar = 'A'
 
@@ -29,66 +39,82 @@ function saveScore:draw()
 
     love.graphics.printf(self.name, 0, h/6 + 100, w, 'center')
 
-    drawKeyboard(self.kbFont, self.selectedChar)
+    drawKeyboard(kb, self.kbFont, self.selectedChar)
 end
 
-function drawKeyboard (font, selectedChar)
+function drawKeyboard (kb, font, selectedChar)
     love.graphics.setColor(1, 1, 1)
 
     local charsPerRow = 10
-    local spaceBetweenColumns = 100
-    local spaceBetweenRows = 100
+    local spaceBetweenCharsX = 50
+    local spaceBetweenRows = 50
 
     local charWidth = font:getWidth('A')
     local startX = (
         love.graphics.getWidth() -
-        (charsPerRow - 1) * spaceBetweenColumns -
-        charWidth
+        charsPerRow * charWidth -
+        (charsPerRow - 1) * spaceBetweenCharsX
     ) / 2
     local startY = 400
 
-    for i=0, 25 do
-        local row = math.floor(i / charsPerRow)
-        local column = i % charsPerRow
+    local prevCharEndX
+    for i, char in ipairs(kb) do
 
-        local char = string.char(string.byte('A') + i)
-        local charX = startX + column * spaceBetweenColumns
-        local charY = startY + row * spaceBetweenRows
+        local row = math.floor((i - 1) / charsPerRow)
+        local column =  (i - 1) % charsPerRow
 
+        charX = startX
+        if column > 0 then
+            charX = prevCharEndX + spaceBetweenCharsX
+        end
+        local charY = startY + row * (font:getHeight() + spaceBetweenRows)
+
+        local charToPrint = char
+        local charToPrintX = charX
         if char == selectedChar then
-            char = '>' .. char .. '<'
-            charX = charX - font:getWidth('>')
+            charToPrint = '>' .. char .. '<'
+            charToPrintX = charToPrintX - font:getWidth('>')
         end
 
-        love.graphics.print(char, font, charX, charY)
+        love.graphics.print(charToPrint, font, charToPrintX, charY)
+
+        prevCharEndX = charX + font:getWidth(char)
     end
+
 end
 
-function getNextChar (char, inc)
-    local nextChar = string.char(
-        string.byte('A') +
-        (string.byte(char) - string.byte('A') + inc) % 26
-    )
+function getNextChar (kb, char, inc)
+    local idx = misc.tablefind(kb, char)
+    local newIdx = ((idx - 1) + inc) % #kb + 1
 
-    return nextChar
+    return kb[newIdx]
 end
 
 function saveScore:keypressed(key)
     if key == 'space' then
-        self.name = self.name .. self.selectedChar
+        if self.selectedChar == DEL then
+            self.name = self.name:sub(1, #self.name - 1)
+        elseif self.selectedChar == END then
+            highscore.add(self.name, self.score)
+
+            local menu = require 'gamestates.menu'
+            Gamestate.switch(menu)
+        else
+            self.name = self.name .. self.selectedChar
+        end
     end
 
     if key == 'right' then
-        self.selectedChar = getNextChar(self.selectedChar, 1)
+        self.selectedChar = getNextChar(kb, self.selectedChar, 1)
     end
     if key == 'left' then
-        self.selectedChar = getNextChar(self.selectedChar, -1)
+        self.selectedChar = getNextChar(kb, self.selectedChar, -1)
     end
     if key == 'down' then
-        self.selectedChar = getNextChar(self.selectedChar, 10)
+        self.selectedChar = getNextChar(kb, self.selectedChar, 10)
     end
     if key == 'up' then
-        self.selectedChar = getNextChar(self.selectedChar, -10)
+        self.selectedChar = getNextChar(kb, self.selectedChar, -10)
     end
 end
 

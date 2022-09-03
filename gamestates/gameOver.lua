@@ -115,7 +115,7 @@ function gameOver:keypressed(key)
             -- gamestates, with each new game?
             Gamestate.switch(menu)
         elseif buttons[selectedButtonIdx] == SAVE then
-            Gamestate.switch(saveScore)
+            Gamestate.switch(saveScore, scoreAchieved)
         end
     end
     if key == 'right' then
