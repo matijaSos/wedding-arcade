@@ -1,9 +1,15 @@
 Gamestate = require 'libs.hump.gamestate'
+lume = require 'libs.lume.lume'
+highscore = require 'libs.sick'
 
 local gameOver = {}
+local scoreAchieved
 
-function gameOver:enter(from)
+function gameOver:enter(from, score)
     self.from = from -- record previous state
+    scoreAchieved = score
+
+    highscore.add('matija', score)
 end
 
 function gameOver:draw()
@@ -16,6 +22,15 @@ function gameOver:draw()
     love.graphics.rectangle('fill', 0,0, w, h)
     love.graphics.setColor(255,255,255)
     love.graphics.printf('GAME OVER', 0, h/2, w, 'center')
+    love.graphics.printf(
+        'Score: ' .. tostring(lume.round(scoreAchieved)),
+        0, h/2 + 40, w, 'center'
+    )
+
+    for i, score, name in highscore() do
+        love.graphics.print(name, 400, h/2 + 40 + i * 40)
+        love.graphics.print(score, 500, h/2 + 40 + i * 40)
+    end
 end
 
 --[[

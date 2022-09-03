@@ -1,6 +1,7 @@
 bump = require 'libs.bump.bump'
 Camera = require 'libs.stalker-x.Camera'
 Gamestate = require 'libs.hump.gamestate'
+lume = require 'libs.lume.lume'
 
 local gameOver = require 'gamestates.gameOver'
 
@@ -48,11 +49,15 @@ function game:enter(oldState, playerConfig)
     for i, e in ipairs(getAllEntities()) do
       world:add(e, e:getRect())
     end
+
+    -- Initialize score count
+    score = 0
+    startingX = platforms[1].x
 end
 
 function game:update(dt)
     if player.isCaught then
-        Gamestate.push(gameOver)
+        Gamestate.push(gameOver, score)
     end
 
     camera:update(dt)
@@ -62,6 +67,9 @@ function game:update(dt)
     scanline:update(dt)
     updatePlatforms(dt, world)
     updateFlyingObstacles(dt, world)
+
+    -- Update score
+    score = math.max(score, player.x - startingX)
 end
 
 function game:draw()
@@ -83,10 +91,13 @@ function game:draw()
     -- HUD
     love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
-    love.graphics.print("Score: xxx", 10, 10)
+    love.graphics.print("Score: " .. tostring(lume.round(score)), 10, 10)
     love.graphics.print('isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 30)
     love.graphics.print('jumpDuration: ' .. tostring(player.jumpDuration), 10, 50)
 
+end
+
+function game:leave()
 end
 
 function updatePlatforms(dt, world)

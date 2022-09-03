@@ -1,10 +1,13 @@
 Gamestate = require 'libs.hump.gamestate'
+highscore = require 'libs.sick'
 
 local menu = require 'gamestates.menu'
 local game = require 'gamestates.game'
 local gameOver = require 'gamestates.gameOver'
 
 function love.load()
+    highscore.set('highscore.txt', 5)
+
     love.window.setFullscreen(true, 'desktop')
 
     Gamestate.registerEvents()
@@ -12,16 +15,12 @@ function love.load()
 end
 
 function love.quit()
-  print("Thanks for playing! Come back soon!")
+    highscore.save()
+    print("Thanks for playing! Come back soon!")
 end
 
 function love.keypressed(key)
     if key == 'escape' then
         love.event.push('quit')
     end
-    --[[
-    elseif Gamestate.current() == game and key == 'p' then
-        Gamestate.push(gameOver)
-    end
-    ]]--
 end

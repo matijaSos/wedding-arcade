@@ -10,3 +10,6 @@
 [submodule "libs/sysl-text"]
 	path = libs/sysl-text
 	url = git@github.com:sysl-dev/sysl-text
+[submodule "libs/lume"]
+	path = libs/lume
+	url = git@github.com:rxi/lume
