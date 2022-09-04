@@ -12,13 +12,13 @@ local kb = {
     'U', 'W', 'X', 'Y', 'Z', DEL, END
 }
 
-function saveScore:enter(from, score)
+function saveScore:enter(from, score, place)
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
     self.kbFont = love.graphics.newFont(pixelFontPath, 80)
     self.titleFont = love.graphics.newFont(pixelFontPath, 100)
 
     self.score = score
-    self.positionAchieved = 3
+    self.place = place
     self.selectedChar = 'A'
 
     self.name = ''
@@ -34,7 +34,7 @@ function saveScore:draw()
     love.graphics.setFont(self.titleFont)
     love.graphics.printf(
         'Your Score: ' .. lume.round(self.score) ..
-        ' . . . #' .. self.positionAchieved,
+        ' . . . #' .. self.place,
         0, h/6, w, 'center'
     )
 
@@ -101,7 +101,7 @@ function saveScore:keypressed(key)
 
             --local menu = require 'gamestates.menu'
             --Gamestate.switch(menu)
-            Gamestate.switch(highscoreGamestate, positionAchieved)
+            Gamestate.switch(highscoreGamestate, self.place)
         else
             self.name = self.name .. self.selectedChar
         end

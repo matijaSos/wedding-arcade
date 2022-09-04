@@ -44,6 +44,19 @@ function h.add(name, score)
    table.sort(h.scores, sortScore)
 end
 
+-- For the given score, check which place it would assume
+-- in a leaderboard table. Does not add the score.
+function h.checkPlace(score)
+    -- TODO(matija): we could use binary search here.
+
+    for i, entry in ipairs(h.scores) do
+        if entry[1] < score then
+            return i
+        end
+    end
+    return #h.scores + 1
+end
+
 function h.save()
    local file = love.filesystem.newFile(h.filename)
 

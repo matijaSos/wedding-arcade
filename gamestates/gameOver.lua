@@ -21,8 +21,7 @@ function gameOver:enter(from, score)
 
     selectedButtonIdx = 1
 
-    -- TODO(matija): implement functionality which performs this check.
-    positionAchieved = 5
+    self.place = highscore.checkPlace(scoreAchieved)
 
     -- TODO(matija): extract this path somewhere, I keep duplicating it.
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
@@ -48,7 +47,7 @@ function gameOver:draw()
     love.graphics.setFont(subtitleFont)
     love.graphics.printf(
         'Your Score: ' .. lume.round(scoreAchieved) ..
-        ' . . . #' .. positionAchieved,
+        ' . . . #' .. self.place,
         0, h/4 + 150, w, 'center'
     )
 
@@ -115,7 +114,7 @@ function gameOver:keypressed(key)
             -- gamestates, with each new game?
             Gamestate.switch(menu)
         elseif buttons[selectedButtonIdx] == SAVE then
-            Gamestate.switch(saveScore, scoreAchieved)
+            Gamestate.switch(saveScore, scoreAchieved, self.place)
         end
     end
     if key == 'right' then
