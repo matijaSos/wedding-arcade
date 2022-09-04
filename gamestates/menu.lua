@@ -22,16 +22,17 @@ function menu:enter()
 
     self.selectedOptionIdx = 1
 
-    -- Dancing subtitle text
-    subtitleTextbox = Text.new('left',
+    -- Dancing title text
+    self.titleTextbox = Text.new('left',
     {
-        font = subtitleFont
+        font = titleFont
     })
-    subtitleTextbox:send('[bounce=10]Press space to start[/bounce]', nil, true)
+    self.titleTextbox:send('[bounce=10]Koom Escape[/bounce]', nil, true)
+
 end
 
 function menu:update(dt)
-    subtitleTextbox:update(dt)
+    self.titleTextbox:update(dt)
 end
 
 function menu:draw()
@@ -44,10 +45,7 @@ function menu:draw()
     love.graphics.setFont(titleFont)
     -- TODO(matija): came up with the y-axis number emprically, not sure how to do
     -- it properly.
-    love.graphics.printf('Koom Escape', 0, h/2 - 80, w, 'center')
-
-    -- Subtitle
-    --subtitleTextbox:draw(w/2 - subtitleTextbox.get.width / 2, h/2 + 80)
+    self.titleTextbox:draw(w/2 - self.titleTextbox.get.width / 2, h/2 - 80)
 
     -- Draw vertical menu here: "start new game", "highscore"
     drawMenuOptions(subtitleFont, options[self.selectedOptionIdx])
@@ -56,6 +54,7 @@ end
 function drawMenuOptions (font, selectedOption)
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
+    love.graphics.setColor(0, 0, 0)
     love.graphics.setFont(font)
 
     love.graphics.printf(
