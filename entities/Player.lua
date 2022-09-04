@@ -114,8 +114,8 @@ function Player:update(dt, world, gravity)
         if other.isMusician then return 'cross' end
         if other.isCollectable then
           if other.isBrandy then
-            self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT / 2
-            self.secondsLeftTillXMovSpeedRecovery = 3
+            self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT * 0.66
+            self.secondsLeftTillXMovSpeedRecovery = 2
           end
           other:collect()
           return 'cross'

@@ -8,7 +8,7 @@ local Scanline = Class{
 function Scanline:init()
     self.isScanline = true
 
-    self.xMovSpeed = 500
+    self.xMovSpeed = 450
 
     Entity.init(self, -300, -1000, 1, 3000)
 end
