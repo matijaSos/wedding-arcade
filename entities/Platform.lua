@@ -7,6 +7,7 @@ local Platform = Class{
 
 function Platform:init(x, y, w, h)
   self.isPlatform = true
+  self.decorations = generateDecorations(w)
   Entity.init(self, x, y, w, h)
 end
 
@@ -35,6 +36,34 @@ function Platform:draw()
       legWidth,
       legHeight
     )
+    -- Draw decorations
+    love.graphics.setColor(1, 1, 1)
+    for k, d in ipairs(self.decorations) do
+      dImgInfo = getDecorationImgInfo(d.type)
+      love.graphics.draw(dImgInfo.img, self.x + d.x, self.y - dImgInfo.h, 0, dImgInfo.scale, scale)
+    end
+end
+
+function generateDecorations(tableWidth)
+  numDecorations = math.random(0, 3)
+  decorations = {}
+  for i=1,numDecorations do
+    decoration = { type='wine-glass', x=math.random(1, tableWidth - 10) }
+    table.insert(decorations, decoration)
+  end
+  return decorations
+end
+
+local wineGlassImg = love.graphics.newImage('assets/wine-glass.png')
+function getDecorationImgInfo(decorationType)
+  if decorationType == 'wine-glass' then
+    return {
+      img=wineGlassImg,
+      scale=0.05,
+      h=50
+    }
+  end
+  error "no such decoration type"
 end
 
 return Platform
