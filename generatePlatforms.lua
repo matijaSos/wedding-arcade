@@ -13,11 +13,11 @@ local generatePlatforms = function (lastPlatform, tileSize)
     local minY = -100
     local maxY = love.graphics.getHeight() + 100
 
-    local minXDist = 10
-    local maxXDist = 200
+    local minXDist = 20
+    local maxXDist = 300
 
     local minYDist = 50
-    local maxYDist = 150
+    local maxYDist = 250
 
     local platforms = {}
 

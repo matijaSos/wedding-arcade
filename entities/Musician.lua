@@ -21,8 +21,8 @@ function Musician:init(scanline, y, initialDirectionY, maxDistYFromCenter, moveS
       self,
       scanline.x,
       cameraRelYToWorldY(self.cameraRelY),
-      self.img:getWidth()*0.1,
-      self.img:getHeight()*0.1
+      self.img:getWidth()*0.2,
+      self.img:getHeight()*0.2
     )
 end
 
@@ -32,7 +32,7 @@ function Musician:draw()
     -- TODO(matija): If I scale down img, I also need to scale down its width
     -- and height as I save it, otherwise collision engine doesn't work since it
     -- has wrong info.
-    love.graphics.draw(self.img, self.x, self.y, 0, 0.1, 0.1)
+    love.graphics.draw(self.img, self.x, self.y, 0, 0.2, 0.2)
 end
 
 function Musician:update(dt, world, gravity)

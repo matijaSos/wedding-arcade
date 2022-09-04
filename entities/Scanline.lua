@@ -8,14 +8,12 @@ local Scanline = Class{
 function Scanline:init()
     self.isScanline = true
 
-    self.xMovSpeed = 225
+    self.xMovSpeed = 500
 
     Entity.init(self, -300, -1000, 1, 3000)
 end
 
 function Scanline:draw()
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.rectangle('line', self:getRect())
 end
 
 function Scanline:update(dt)
@@ -23,17 +21,9 @@ function Scanline:update(dt)
     local colFilter = function (item, other)
         return 'cross'
     end
-
     self.x, self.y, collisions, collLen = world:move(
         self, goalX, self.y, colFilter
     )
-
-    for i, coll in ipairs(collisions) do
-        if coll.other.isPlayer then
-            print('collided with player!')
-            coll.other.isCaught = true
-        end
-    end
 end
 
 return Scanline
