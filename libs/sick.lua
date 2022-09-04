@@ -1,7 +1,12 @@
 -- SICK: Simple Indicative of Competitive sKill
 -- aka libhighscore
+
+local lume = require 'libs.lume.lume'
+
 local h = {}
 h.scores = {}
+
+h.mostRecentNames = {}
 
 function h.set(filename, places)
    h.filename = filename
@@ -26,6 +31,8 @@ function h.load()
    for line in file:lines() do
       local i = line:find('\t', 1, true)
       h.scores[#h.scores+1] = {tonumber(line:sub(1, i-1)), line:sub(i+1)}
+
+      h.mostRecentNames[#h.mostRecentNames + 1] = line:sub(i + 1)
    end
 
    -- NOTE(matija): we're not explicitly closing the file via file:close() because
@@ -42,6 +49,8 @@ end
 function h.add(name, score)
    h.scores[#h.scores+1] = {score, name}
    table.sort(h.scores, sortScore)
+
+    table.insert(h.mostRecentNames, 1, name)
 end
 
 -- For the given score, check which place it would assume
@@ -55,6 +64,20 @@ function h.checkPlace(score)
         end
     end
     return #h.scores + 1
+end
+
+function h.getMostRecentNames(n)
+    local occ = {}
+    local mrn = {}
+    
+    for _, name in ipairs(h.mostRecentNames) do
+        if not occ[name] then
+            table.insert(mrn, name)
+            occ[name] = true
+        end
+    end
+
+    return table.move(mrn, 1, n, 1, {})
 end
 
 function h.save()

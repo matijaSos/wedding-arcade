@@ -81,20 +81,6 @@ function gameOver:draw()
 
     love.graphics.draw(saveButtonText, saveButtonX, buttonY)
     love.graphics.draw(resetButtonText, resetButtonX, buttonY)
-
-
-    --[[
-    love.graphics.printf(
-        'Score: ' .. tostring(lume.round(scoreAchieved)),
-        0, h/2 + 40, w, 'center'
-    )
-
-    -- Draw highscore table.
-    for i, score, name in highscore() do
-        love.graphics.print(name, 400, h/2 + 40 + i * 40)
-        love.graphics.print(score, 500, h/2 + 40 + i * 40)
-    end
-    ]]--
 end
 
 function getButtonText (text, isSelected)

@@ -1,3 +1,4 @@
+local lume = require 'libs.lume.lume'
 local misc = require 'misc'
 local highscore = require 'libs.sick'
 local highscoreGamestate = require 'gamestates.highscore'
@@ -9,7 +10,7 @@ local DEL, END = 'DEL', 'END'
 local kb = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-    'U', 'W', 'X', 'Y', 'Z', DEL, END
+    'U', 'W', 'X', 'Y', 'Z', '-', '.', '!', DEL, END
 }
 
 function saveScore:enter(from, score, place)
@@ -22,6 +23,13 @@ function saveScore:enter(from, score, place)
     self.selectedChar = 'A'
 
     self.name = ''
+
+    self.mostRecentNames = highscore.getMostRecentNames(3)
+
+    self.kb = lume.clone(kb)
+    for _, n in ipairs(self.mostRecentNames) do
+        table.insert(self.kb, n)
+    end
 end
 
 function saveScore:draw()
@@ -40,7 +48,7 @@ function saveScore:draw()
 
     love.graphics.printf(self.name, 0, h/6 + 100, w, 'center')
 
-    drawKeyboard(kb, self.kbFont, self.selectedChar)
+    drawKeyboard(self.kb, self.kbFont, self.selectedChar)
 end
 
 function drawKeyboard (kb, font, selectedChar)
@@ -86,7 +94,7 @@ end
 
 function getNextChar (kb, char, inc)
     local idx = misc.tablefind(kb, char)
-    local newIdx = ((idx - 1) + inc) % #kb + 1
+    local newIdx = math.min((idx - 1) + inc, #kb - 1) % #kb + 1
 
     return kb[newIdx]
 end
@@ -96,28 +104,28 @@ function saveScore:keypressed(key)
         if self.selectedChar == DEL then
             self.name = self.name:sub(1, #self.name - 1)
         elseif self.selectedChar == END then
-            highscore.add(self.name, self.score)
-            highscore.save()
+            if #self.name > 0 then
+                highscore.add(self.name, self.score)
+                highscore.save()
 
-            --local menu = require 'gamestates.menu'
-            --Gamestate.switch(menu)
-            Gamestate.switch(highscoreGamestate, self.place)
+                Gamestate.switch(highscoreGamestate, self.place)
+            end
         else
             self.name = self.name .. self.selectedChar
         end
     end
 
     if key == 'right' then
-        self.selectedChar = getNextChar(kb, self.selectedChar, 1)
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, 1)
     end
     if key == 'left' then
-        self.selectedChar = getNextChar(kb, self.selectedChar, -1)
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, -1)
     end
     if key == 'down' then
-        self.selectedChar = getNextChar(kb, self.selectedChar, 10)
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, 10)
     end
     if key == 'up' then
-        self.selectedChar = getNextChar(kb, self.selectedChar, -10)
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, -10)
     end
 end
 
