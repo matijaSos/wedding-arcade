@@ -10,6 +10,7 @@ Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
 Brandy = require 'entities.Brandy'
+Coffee = require 'entities.Coffee'
 Musician = require 'entities.Musician'
 
 misc = require 'misc'
@@ -188,12 +189,15 @@ end
 function maybeGenerateNewCollectables(dt)
   -- TODO: Make chance of collectable proportional to time passed (dt), somehow.
   if math.random(0, 1000) < 10 then
-    generateBrandy()
+    generateCollectable(Brandy, 80)
+  end
+  if math.random(0, 1000) < 10 then
+    generateCollectable(Coffee, 40)
   end
 end
 
-local lastPlatformWithBrandy = nil
-function generateBrandy()
+local lastPlatformWithCollectable = nil
+function generateCollectable(collectableConstructor, collectableHeight)
   local cameraX, cameraY = camera:toWorldCoords(0, 0)
   local minX = cameraX + love.graphics.getWidth() + 100
 
@@ -203,12 +207,11 @@ function generateBrandy()
     if p.x > minX then platform = p break end
   end
 
-  if not (platform == nil or lastPlatformWithBrandy == platform) then
-    -- TODO: 40 is now hardcoded! Get the number from Brandy somehow, based on Brandies height?
-    local y = platform.y - 80
+  if not (platform == nil or lastPlatformWithCollectable == platform) then
+    local y = platform.y - collectableHeight
     local x = math.random(platform.x, platform.x + platform.w)
-    addEntity(Brandy(x, y))
-    lastPlatformWithBrandy = platform
+    addEntity(collectableConstructor(x, y))
+    lastPlatformWithCollectable = platform
   end
 end
 
