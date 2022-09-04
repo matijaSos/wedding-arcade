@@ -5,13 +5,13 @@ local Musician = Class{
     __includes = Entity
 }
 
-function Musician:init(scanline, y, initialDirectionY, moveSpeedY)
+function Musician:init(scanline, y, initialDirectionY, maxDistYFromCenter, moveSpeedY)
     self.isMusician = true
     self.img = love.graphics.newImage('assets/player_hrvoje.png')
     self.scanline = scanline
     self.centerCameraRelY = y
     self.cameraRelY = y
-    self.maxDistYFromCenter = 150
+    self.maxDistYFromCenter = maxDistYFromCenter
     self.directionY = initialDirectionY
     self.moveSpeedY = moveSpeedY
 
@@ -46,14 +46,13 @@ function Musician:update(dt, world, gravity)
     end
     self.x, self.y, collisions, collLen = world:move(self, goalX, goalY, colFilter)
 
-    self.cameraRelY = worldYToCameraRelY(self.x, self.y)
+    self.cameraRelY = worldYToCameraRelY(self.y)
     if self.cameraRelY > self.centerCameraRelY + self.maxDistYFromCenter then
       self.directionY = -1
     end
     if self.cameraRelY < self.centerCameraRelY - self.maxDistYFromCenter then
       self.directionY = 1
     end
-    print (self.x, self.y, self.cameraRelY, self.directionY)
 end
 
 function cameraRelYToWorldY(cameraRelY)

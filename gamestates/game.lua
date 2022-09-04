@@ -45,10 +45,16 @@ function game:enter(oldState, playerConfig)
     player = Player(platforms[1].x, platforms[1].y, playerConfig)
     addEntity(player)
 
-    local musician1 = Musician(scanline, 100, 1, 200)
-    local musician2 = Musician(scanline, 500, -1, 300)
-    addEntity(musician1)
-    addEntity(musician2)
+    local musicians = {
+      Musician(scanline, 200, 1, 150, 200),
+      Musician(scanline, 400, -1, 150, 300),
+      Musician(scanline, 500, -1, 100, 250),
+      Musician(scanline, 600, 1, 100, 300),
+      Musician(scanline, 650, 1, 200, 200),
+      Musician(scanline, 800, 1, 200, 300),
+      Musician(scanline, 900, -1, 150, 250)
+    }
+    addEntities(musicians)
 end
 
 function game:update(dt)
