@@ -7,6 +7,8 @@ function highscore:enter(from, place)
     -- TODO(matija): extract this path somewhere, I keep duplicating it.
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
     self.scoreFont = love.graphics.newFont(pixelFontPath, 60)
+
+    self.place = place
 end
 
 function highscore:draw()
@@ -36,6 +38,11 @@ function highscore:draw()
 
     for i, score, name in hs() do
         local y = startY + (i - 1) * (charH + spacingY)
+
+        love.graphics.setColor(1, 1, 1)
+        if self.place and i == self.place then
+            love.graphics.setColor(1, 1, 0) -- Yellow
+        end
 
         love.graphics.print('#' .. i, self.scoreFont, placeX, y)
         love.graphics.print(name, self.scoreFont, nameX, y)
