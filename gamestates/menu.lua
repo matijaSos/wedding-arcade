@@ -3,8 +3,12 @@ local Text = require 'libs.sysl-text.example.library.slog-text'
 
 local drawBg = require 'drawMenuBackground'
 
-local game = require 'gamestates.game'
 local menuSelectPlayer = require 'gamestates.menuSelectPlayer'
+local highscore = require 'gamestates.highscore'
+
+local NEW_GAME = 'Start new game'
+local LEADERBOARD = 'Leaderboard'
+local options = { NEW_GAME, LEADERBOARD }
 
 local menu = {}
 
@@ -15,6 +19,8 @@ function menu:enter()
     subtitleFont = love.graphics.newFont(pixelFontPath, 70)
 
     bgAssets = drawBg.loadMenuBgAssets()
+
+    self.selectedOptionIdx = 1
 
     -- Dancing subtitle text
     subtitleTextbox = Text.new('left',
@@ -41,12 +47,47 @@ function menu:draw()
     love.graphics.printf('Koom Escape', 0, h/2 - 80, w, 'center')
 
     -- Subtitle
-    subtitleTextbox:draw(w/2 - subtitleTextbox.get.width / 2, h/2 + 80)
+    --subtitleTextbox:draw(w/2 - subtitleTextbox.get.width / 2, h/2 + 80)
+
+    -- Draw vertical menu here: "start new game", "highscore"
+    drawMenuOptions(subtitleFont, options[self.selectedOptionIdx])
+end
+
+function drawMenuOptions (font, selectedOption)
+    local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+
+    love.graphics.setFont(font)
+
+    love.graphics.printf(
+        getOptionText('Start new game', selectedOption == NEW_GAME),
+        0, h/2 + 80, w, 'center'
+    )
+    love.graphics.printf(
+        getOptionText('Leaderboard', selectedOption == LEADERBOARD),
+        0, h/2 + 80 + 80, w, 'center'
+    )
+
+end
+
+function getOptionText (text, isSelected)
+    if isSelected then return '> ' .. text .. ' <' end
+
+    return text
 end
 
 function menu:keypressed(key)
     if key == 'space' then
-        return Gamestate.switch(menuSelectPlayer)
+        if options[self.selectedOptionIdx] == NEW_GAME then
+            return Gamestate.switch(menuSelectPlayer)
+        elseif options[self.selectedOptionIdx] == LEADERBOARD then
+            return Gamestate.switch(highscore)
+        end
+    end
+    if key == 'up' then
+        self.selectedOptionIdx = (self.selectedOptionIdx % 2) + 1
+    end
+    if key == 'down' then
+        self.selectedOptionIdx = ((self.selectedOptionIdx - 2) % 2) + 1
     end
 end
 
