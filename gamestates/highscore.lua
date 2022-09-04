@@ -46,7 +46,7 @@ function highscore:draw()
 
         love.graphics.print('#' .. i, self.scoreFont, placeX, y)
         love.graphics.print(name, self.scoreFont, nameX, y)
-        love.graphics.print(lume.round(score), self.scoreFont, scoreX, y)
+        love.graphics.print(lume.round(score) .. 'm', self.scoreFont, scoreX, y)
     end
 end
 

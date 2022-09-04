@@ -46,7 +46,7 @@ function gameOver:draw()
 
     love.graphics.setFont(subtitleFont)
     love.graphics.printf(
-        'Your Score: ' .. lume.round(scoreAchieved) ..
+        'Your Score: ' .. lume.round(scoreAchieved) .. 'm' ..
         ' . . . #' .. self.place,
         0, h/4 + 150, w, 'center'
     )

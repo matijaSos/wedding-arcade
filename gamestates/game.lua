@@ -10,14 +10,16 @@ Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
 Brandy = require 'entities.Brandy'
+Coffee = require 'entities.Coffee'
 Musician = require 'entities.Musician'
 
 misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
 
 -- TODO(matija): make these constants written in caps.
-local tileSize = 32
+TILE_SIZE = 24
 local gravity = 3000
+ONE_METER_IN_PX = 100
 
 local game = {}
 
@@ -37,7 +39,7 @@ function game:enter(oldState, playerConfig)
     love.graphics.setBackgroundColor(1, 1, 1)
     hudFont = love.graphics.newFont(18)
 
-    world = bump.newWorld(tileSize)
+    world = bump.newWorld(TILE_SIZE)
 
     camera = Camera()
     camera:setFollowLerp(0.2)
@@ -46,7 +48,7 @@ function game:enter(oldState, playerConfig)
     scanline = Scanline()
     addEntity(scanline)
 
-    local platforms = generatePlatforms({x=0, y=800, width=200}, tileSize)
+    local platforms = generatePlatforms({x=0, y=800, width=200}, TILE_SIZE)
     addEntities(platforms)
 
     player = Player(platforms[1].x, platforms[1].y, playerConfig)
@@ -81,7 +83,7 @@ function game:update(dt)
     end
 
     -- Update score
-    score = math.max(score, player.x - startingX)
+    score = math.max(score, (player.x - startingX) / ONE_METER_IN_PX)
 
     -- Destroy any entities that have gone far beyond the scanline.
     for i, e in ipairs(entities) do
@@ -120,7 +122,7 @@ function game:draw()
     -- HUD
     love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
-    love.graphics.print("Score: " .. tostring(lume.round(score)), 10, 10)
+    love.graphics.print("Score: " .. tostring(lume.round(score)) .. "m", 10, 10)
     love.graphics.print(
       'isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 30
     )
@@ -168,7 +170,7 @@ function generateNewPlatformsIfNeeded()
   if lastPlatform and lastPlatform.x < cameraX + love.graphics.getWidth()*2 then
     local newPlatforms = generatePlatforms(
       {x=lastPlatform.x, y=lastPlatform.y, width=lastPlatform.w},
-      tileSize
+      TILE_SIZE
     )
     addEntities(newPlatforms)
   end
@@ -176,7 +178,7 @@ end
 
 function maybeGenerateNewFlyingObstacle(dt)
   -- TODO: Make chance of flying obstacle proportional to time passed (dt), somehow.
-  if math.random(0, 1000) < 15 then
+  if math.random(0, 1000) < 10 then
     local cameraX, cameraY = camera:toWorldCoords(0, 0)
     local x = cameraX + love.graphics.getWidth() + 100
     local y = math.random(cameraY, cameraY + love.graphics.getHeight())
@@ -187,12 +189,15 @@ end
 function maybeGenerateNewCollectables(dt)
   -- TODO: Make chance of collectable proportional to time passed (dt), somehow.
   if math.random(0, 1000) < 10 then
-    generateBrandy()
+    generateCollectable(Brandy, 80)
+  end
+  if math.random(0, 1000) < 10 then
+    generateCollectable(Coffee, 40)
   end
 end
 
-local lastPlatformWithBrandy = nil
-function generateBrandy()
+local lastPlatformWithCollectable = nil
+function generateCollectable(collectableConstructor, collectableHeight)
   local cameraX, cameraY = camera:toWorldCoords(0, 0)
   local minX = cameraX + love.graphics.getWidth() + 100
 
@@ -202,12 +207,11 @@ function generateBrandy()
     if p.x > minX then platform = p break end
   end
 
-  if not (platform == nil or lastPlatformWithBrandy == platform) then
-    -- TODO: 40 is now hardcoded! Get the number from Brandy somehow, based on Brandies height?
-    local y = platform.y - 80
+  if not (platform == nil or lastPlatformWithCollectable == platform) then
+    local y = platform.y - collectableHeight
     local x = math.random(platform.x, platform.x + platform.w)
-    addEntity(Brandy(x, y))
-    lastPlatformWithBrandy = platform
+    addEntity(collectableConstructor(x, y))
+    lastPlatformWithCollectable = platform
   end
 end
 

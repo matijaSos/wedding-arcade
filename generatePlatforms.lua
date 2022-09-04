@@ -5,7 +5,7 @@
 -- lastPlatform.y
 -- lastPlatform.width (in pixels)
 --
--- tileSize is size of one tile in pixels.
+-- TILE_SIZE is size of one tile in pixels.
 local generatePlatforms = function (lastPlatform, tileSize)
     local minPlatformLengthInTiles = 4
     local maxPlatformLengthInTiles = 20
