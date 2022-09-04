@@ -12,7 +12,7 @@ function Brandy:init(x, y)
     self,
     x, y,
     love.graphics.newImage('assets/brandy.png'),
-    0.2
+    0.4
   )
 end
 

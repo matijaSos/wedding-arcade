@@ -16,7 +16,7 @@ misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
 
 -- TODO(matija): make these constants written in caps.
-local tileSize = 16
+local tileSize = 32
 local gravity = 3000
 
 local game = {}
@@ -35,7 +35,7 @@ function game:enter(oldState, playerConfig)
     entities = {}
 
     love.graphics.setBackgroundColor(1, 1, 1)
-    hudFont = love.graphics.newFont(12)
+    hudFont = love.graphics.newFont(18)
 
     world = bump.newWorld(tileSize)
 
@@ -46,7 +46,7 @@ function game:enter(oldState, playerConfig)
     scanline = Scanline()
     addEntity(scanline)
 
-    local platforms = generatePlatforms({x=0, y=400, width=100}, tileSize)
+    local platforms = generatePlatforms({x=0, y=800, width=200}, tileSize)
     addEntities(platforms)
 
     player = Player(platforms[1].x, platforms[1].y, playerConfig)
@@ -69,8 +69,8 @@ function game:enter(oldState, playerConfig)
 end
 
 function game:update(dt)
-    if player.isCaught then
-        Gamestate.push(gameOver, score)
+    if player.x <= scanline.x or player.y > love.graphics.getHeight() * 2.5 then
+      Gamestate.push(gameOver, score)
     end
 
     camera:update(dt)
@@ -109,11 +109,11 @@ function game:draw()
     end
 
     -- For debugging/testing.
-    love.graphics.line(0, -100, 5000, -100)
-    love.graphics.line(
-        0, love.graphics.getHeight() + 100, 5000,
-        love.graphics.getHeight() + 100
-    )
+    -- love.graphics.line(0, -100, 5000, -100)
+    -- love.graphics.line(
+    --     0, love.graphics.getHeight() + 100, 5000,
+    --     love.graphics.getHeight() + 100
+    -- )
 
     camera:detach()
 
@@ -186,7 +186,7 @@ end
 
 function maybeGenerateNewCollectables(dt)
   -- TODO: Make chance of collectable proportional to time passed (dt), somehow.
-  if math.random(0, 1000) < 5 then
+  if math.random(0, 1000) < 10 then
     generateBrandy()
   end
 end
@@ -204,7 +204,7 @@ function generateBrandy()
 
   if not (platform == nil or lastPlatformWithBrandy == platform) then
     -- TODO: 40 is now hardcoded! Get the number from Brandy somehow, based on Brandies height?
-    local y = platform.y - 40
+    local y = platform.y - 80
     local x = math.random(platform.x, platform.x + platform.w)
     addEntity(Brandy(x, y))
     lastPlatformWithBrandy = platform

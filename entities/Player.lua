@@ -5,13 +5,11 @@ local Player = Class{
     __includes = Entity
 }
 
-local PLAYER_X_MOV_SPEED_DEFAULT = 300
+local PLAYER_X_MOV_SPEED_DEFAULT = 600
 
 function Player:init(x, y, playerConfig)
     self.isPlayer = true
     self.img = love.graphics.newImage(playerConfig.imgPath)
-
-    self.isCaught = false
 
     -- How fast player moves along the X axis. A constant for now.
     self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT
@@ -19,7 +17,7 @@ function Player:init(x, y, playerConfig)
 
     -- When player jumps, the initial speed he has.
     self.jumpingSpeed = 1100
-    
+
     self.yCurrVelocity = 0
     self.isGrounded = false
 
@@ -32,7 +30,7 @@ function Player:init(x, y, playerConfig)
 
     -- TODO(matija): we don't want to have hardcoded scale factor. Maybe not even
     -- a scale factor at all, I should edit the image itself?
-    Entity.init(self, x, y, self.img:getWidth()*0.1, self.img:getHeight()*0.1)
+    Entity.init(self, x, y, self.img:getWidth()*0.2, self.img:getHeight()*0.2)
 end
 
 function Player:draw()
@@ -41,7 +39,7 @@ function Player:draw()
     -- TODO(matija): If I scale down img, I also need to scale down its width
     -- and height as I save it, otherwise collision engine doesn't work since it
     -- has wrong info.
-    love.graphics.draw(self.img, self.x, self.y, 0, 0.1, 0.1)
+    love.graphics.draw(self.img, self.x, self.y, 0, 0.2, 0.2)
 
     --love.graphics.rectangle('line', self:getRect())
 end
@@ -113,9 +111,10 @@ function Player:update(dt, world, gravity)
 
     local colFilter = function (item, other)
         if other.isScanline then return 'cross' end
+        if other.isMusician then return 'cross' end
         if other.isCollectable then
           if other.isBrandy then
-            self.xMovSpeed = 150
+            self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT / 2
             self.secondsLeftTillXMovSpeedRecovery = 3
           end
           other:collect()

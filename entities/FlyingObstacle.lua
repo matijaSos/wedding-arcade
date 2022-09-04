@@ -8,8 +8,8 @@ local FlyingObstacle = Class{
 function FlyingObstacle:init(x, y)
   self.isFlyingObstacle = true
   self.img = love.graphics.newImage('assets/wedding-bouquet.png')
-  self.imgScaling = 0.2
-  self.xMovSpeed = 350
+  self.imgScaling = 0.4
+  self.xMovSpeed = 500
   self.directionDeg = 0
 
   Entity.init(
