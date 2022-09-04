@@ -4,7 +4,7 @@ local highscore = require 'libs.sick'
 local menu = require 'gamestates.menu'
 
 function love.load()
-    highscore.set('highscore.txt', 5)
+    highscore.set('highscore.txt', 10)
 
     love.window.setFullscreen(true, 'desktop')
 

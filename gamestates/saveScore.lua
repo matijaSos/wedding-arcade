@@ -1,5 +1,6 @@
 local misc = require 'misc'
 local highscore = require 'libs.sick'
+local highscoreGamestate = require 'gamestates.highscore'
 
 local saveScore = {}
 
@@ -96,9 +97,11 @@ function saveScore:keypressed(key)
             self.name = self.name:sub(1, #self.name - 1)
         elseif self.selectedChar == END then
             highscore.add(self.name, self.score)
+            highscore.save()
 
-            local menu = require 'gamestates.menu'
-            Gamestate.switch(menu)
+            --local menu = require 'gamestates.menu'
+            --Gamestate.switch(menu)
+            Gamestate.switch(highscoreGamestate, positionAchieved)
         else
             self.name = self.name .. self.selectedChar
         end
