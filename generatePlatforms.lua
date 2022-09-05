@@ -14,10 +14,10 @@ local generatePlatforms = function (lastPlatform, tileSize)
     local maxY = love.graphics.getHeight() + 100
 
     local minXDist = 20
-    local maxXDist = 300
+    local maxXDist = 250
 
     local minYDist = 50
-    local maxYDist = 250
+    local maxYDist = 200
 
     local platforms = {}
 
@@ -40,15 +40,52 @@ local generatePlatforms = function (lastPlatform, tileSize)
         platformX = newPlatformX
         platformY = newPlatformY
         platformLengthInTiles = newPlatformLengthInTiles
-
-        table.insert(platforms,
-                     Platform(
-                       platformX, platformY,
-                       platformLengthInTiles * tileSize, tileSize * 2
-                     )
+        local platform = Platform(
+          platformX, platformY,
+          platformLengthInTiles * tileSize, tileSize * 2
         )
+
+        table.insert(platforms, platform)
     end
 
+    -- Add some supporting platforms
+    -- TODO: Still, sometimes a generated platform might block important jump. Not often, but it can happen.
+    --   Also, they are not super useful in game. They do give a feeling of more stuff on the screen which is nice,
+    --   but they don't make game easier.
+    --   Maybe better strategy would be to generate secondary train of platforms that follows some rules in order
+    --   to not create problems for the main train of platforms?
+    local numSupportingPlatforms = 15
+    local minYDistForSupportingPlatform = 300
+    local supportingPlatformsMinX = lastPlatform.x
+    local supportingPlatformsMaxX = platforms[#platforms].x - 1
+    for i = 1, numSupportingPlatforms do
+      while true do
+        local newPlatformLengthInTiles = math.random(
+          minPlatformLengthInTiles, maxPlatformLengthInTiles
+        )
+        local newPlatform = Platform(
+          math.random(supportingPlatformsMinX, supportingPlatformsMaxX),
+          math.random(minY, maxY),
+          newPlatformLengthInTiles * tileSize,
+          tileSize * 2
+        )
+
+        local isPositionedOk = true
+        for i=1,#platforms do
+          local p = platforms[i]
+          local isOverlappingViaX = not (p.x >= newPlatform.x + newPlatform.w or p.x + p.w <= newPlatform.x)
+          local yDist = math.abs(newPlatform.y - p.y)
+          if isOverlappingViaX and yDist <= minYDistForSupportingPlatform then isPositionedOk = false break end
+        end
+
+        if isPositionedOk then
+          table.insert(platforms, newPlatform)
+          break
+        end
+      end
+    end
+
+    table.sort(platforms, function (p1, p2) return p1.x < p2.x end)
     return platforms
 end
 
