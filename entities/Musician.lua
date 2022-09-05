@@ -36,7 +36,7 @@ function Musician:draw()
 end
 
 function Musician:update(dt, world, gravity)
-    local dy = self.directionY * self.moveSpeedY * dt
+    local dy = self.directionY * self.moveSpeedY * gameSpeedFactor * dt
 
     local goalX = self.scanline.x
     local goalY = cameraRelYToWorldY(self.cameraRelY + dy)

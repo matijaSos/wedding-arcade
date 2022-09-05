@@ -34,7 +34,7 @@ function FlyingObstacle:draw()
 end
 
 function FlyingObstacle:update(dt, world)
-    local goalX = self.x - self.xMovSpeed * dt
+    local goalX = self.x - self.xMovSpeed * gameSpeedFactor * dt
     local goalY = self.y
     local newDirectionDeg = (self.directionDeg - 360 * dt) % 360
 

@@ -57,12 +57,10 @@ function Player:update(dt, world, gravity)
     local dx = 0
     local dy = 0
 
-    if love.keyboard.isDown("right") then
-        dx = self.xMovSpeed * dt
-    end
-    if love.keyboard.isDown("left") then
-        dx = -self.xMovSpeed * dt
-    end
+    local xDirection = 0
+    if love.keyboard.isDown("right") then xDirection = 1 end
+    if love.keyboard.isDown("left") then xDirection = -1 end
+    dx = xDirection * self.xMovSpeed * gameSpeedFactor * dt
 
     -- Apply gravity
     self.yCurrVelocity = self.yCurrVelocity + gravity * dt

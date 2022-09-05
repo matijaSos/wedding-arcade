@@ -20,6 +20,7 @@ generatePlatforms = require 'generatePlatforms'
 TILE_SIZE = 24
 local gravity = 3000
 ONE_METER_IN_PX = 100
+gameSpeedFactor = 0.8
 
 local game = {}
 
@@ -83,7 +84,12 @@ function game:update(dt)
     end
 
     -- Update score
-    score = math.max(score, (player.x - startingX) / ONE_METER_IN_PX)
+    metersProgressed = (player.x - startingX) / ONE_METER_IN_PX
+    score = math.max(score, metersProgressed)
+
+    -- Increase game speed
+    if (metersProgressed < 50) then gameSpeedFactor = 1
+    else gameSpeedFactor = 1 + math.sqrt((metersProgressed - 50) / 200) * 0.5 end
 
     -- Destroy any entities that have gone far beyond the scanline.
     for i, e in ipairs(entities) do
@@ -123,10 +129,11 @@ function game:draw()
     love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
     love.graphics.print("Score: " .. tostring(lume.round(score)) .. "m", 10, 10)
+    love.graphics.print("gameSpeedFactor: " .. tostring(gameSpeedFactor), 10, 30)
     love.graphics.print(
-      'isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 30
+      'isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 50
     )
-    love.graphics.print('jumpDuration: ' .. tostring(player.jumpDuration), 10, 50)
+    love.graphics.print('jumpDuration: ' .. tostring(player.jumpDuration), 10, 70)
 end
 
 function game:leave()

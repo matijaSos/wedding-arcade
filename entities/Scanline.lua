@@ -8,16 +8,16 @@ local Scanline = Class{
 function Scanline:init()
     self.isScanline = true
 
-    self.xMovSpeed = 450
+    self.xMovSpeed = 400
 
-    Entity.init(self, -300, -1000, 1, 3000)
+    Entity.init(self, -800, -1000, 1, 3000)
 end
 
 function Scanline:draw()
 end
 
 function Scanline:update(dt)
-    local goalX = self.x + self.xMovSpeed * dt
+    local goalX = self.x + self.xMovSpeed * gameSpeedFactor * dt
     local colFilter = function (item, other)
         return 'cross'
     end
