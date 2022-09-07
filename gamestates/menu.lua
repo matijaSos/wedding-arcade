@@ -91,4 +91,8 @@ function getOptionText (text, isSelected)
     return text
 end
 
+function love.joystickpressed(joystick, button)
+    print('pressed joystick button: ', button)
+end
+
 return menu

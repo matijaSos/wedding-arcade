@@ -14,6 +14,7 @@ function love.load()
     print('num of joysticks: ', #joysticks)
     for i, joystick in ipairs(joysticks) do
         print(joystick:getName())
+        print('button count: ', joystick:getButtonCount())
     end
 
     Gamestate.registerEvents()
