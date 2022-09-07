@@ -10,7 +10,8 @@ local input = baton.new {
         up = {'key:up', 'key:w', 'axis:lefty-', 'button:dpup'},
         down = {'key:down', 'key:s', 'axis:lefty+', 'button:dpdown'},
         action = {'key:space', 'button:a'},
-    }
+    },
+    joystick = love.joystick.getJoysticks()[1]
 }
 
 return input

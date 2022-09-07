@@ -9,6 +9,13 @@ function love.load()
     -- love.window.setFullscreen(true, 'desktop')
     love.window.setMode(1920, 1080)
 
+    -- Print joystick info.
+    local joysticks = love.joystick.getJoysticks()
+    print('num of joysticks: ', #joysticks)
+    for i, joystick in ipairs(joysticks) do
+        print(joystick:getName())
+    end
+
     Gamestate.registerEvents()
     Gamestate.switch(menu)
 end
