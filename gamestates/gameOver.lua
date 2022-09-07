@@ -1,7 +1,8 @@
 local Gamestate = require 'libs.hump.gamestate'
 local lume = require 'libs.lume.lume'
 local highscore = require 'libs.sick'
-local input = require 'input'
+local inputs = require 'input'
+local inputR, inputL = inputs.right, inputs.left
 
 local saveScore = require 'gamestates.saveScore'
 
@@ -33,8 +34,10 @@ function gameOver:enter(from, score)
 end
 
 function gameOver:update()
-    input:update()
-    if input:pressed 'action' then
+    inputR:update()
+    inputL:update()
+
+    if inputR:pressed 'action' or inputL:pressed 'action' then
         if buttons[selectedButtonIdx] == RESTART then
             local menu = require 'gamestates.menu'
             -- TODO(matija): is it ok to do switch here, given this gamestate
@@ -45,11 +48,11 @@ function gameOver:update()
             Gamestate.switch(saveScore, scoreAchieved, self.place)
         end
     end
-    if input:pressed 'right' then
+    if inputL:pressed 'right' then
         selectedButtonIdx = selectedButtonIdx + 1
         if selectedButtonIdx > #buttons then selectedButtonIdx = 1 end
     end
-    if input:pressed 'left' then
+    if inputL:pressed 'left' then
         selectedButtonIdx = selectedButtonIdx - 1
         if selectedButtonIdx < 1 then selectedButtonIdx = #buttons end
     end

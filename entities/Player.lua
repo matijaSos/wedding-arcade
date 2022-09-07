@@ -1,7 +1,8 @@
 local Class = require 'libs.hump.class'
 local Entity = require 'entities.Entity'
 
-local input = require 'input'
+local inputs = require 'input'
+local inputR, inputL = inputs.right, inputs.left
 
 local Player = Class{
     __includes = Entity
@@ -49,7 +50,8 @@ end
 local wasJumpButtonDown = false
 
 function Player:update(dt, world, gravity)
-    input:update()
+    inputR:update()
+    inputL:update()
 
     self.secondsLeftTillXMovSpeedRecovery = math.max(
         self.secondsLeftTillXMovSpeedRecovery - dt, 0
@@ -64,14 +66,14 @@ function Player:update(dt, world, gravity)
     local dy = 0
 
     local xDirection = 0
-    if input:down("right") then xDirection = 1 end
-    if input:down("left") then xDirection = -1 end
+    if inputL:down("right") then xDirection = 1 end
+    if inputL:down("left") then xDirection = -1 end
     dx = xDirection * self.xMovSpeed * gameSpeedFactor * dt
 
     -- Apply gravity
     self.yCurrVelocity = self.yCurrVelocity + gravity * dt
 
-    if input:down('action') then
+    if inputL:down('action') or inputR:down 'action' then
       if wasJumpButtonDown == false then
         if self.isGrounded then
           -- Jump!
@@ -95,7 +97,8 @@ function Player:update(dt, world, gravity)
     end
 
     -- We catch the moment during jump when jump button is released.
-    if self.isJumpDurationTracked and not input:down('action') then
+    if self.isJumpDurationTracked and not
+        (inputL:down('action') or inputR:down('action')) then
         if self.yCurrVelocity < 0 -- If still going up
            -- NOTE(matija): if jump button was held for a very short time,
            -- we wait until it reaches

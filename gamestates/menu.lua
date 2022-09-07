@@ -2,7 +2,8 @@ local Gamestate = require 'libs.hump.gamestate'
 local Text = require 'libs.sysl-text.example.library.slog-text'
 
 local drawBg = require 'drawMenuBackground'
-local input = require 'input'
+local inputs = require 'input'
+local inputR, inputL = inputs.right, inputs.left
 
 local menuSelectPlayer = require 'gamestates.menuSelectPlayer'
 local highscore = require 'gamestates.highscore'
@@ -36,18 +37,20 @@ end
 function menu:update(dt)
     self.titleTextbox:update(dt)
 
-    input:update()
-    if input:pressed 'action' then
+    inputR:update()
+    inputL:update()
+
+    if inputR:pressed 'action' or inputL:pressed 'action' then
         if options[self.selectedOptionIdx] == NEW_GAME then
             return Gamestate.switch(menuSelectPlayer)
         elseif options[self.selectedOptionIdx] == LEADERBOARD then
             return Gamestate.switch(highscore)
         end
     end
-    if input:pressed 'up' then
+    if inputL:pressed 'up' then
         self.selectedOptionIdx = (self.selectedOptionIdx % 2) + 1
     end
-    if input:pressed 'down' then
+    if inputL:pressed 'down' then
         self.selectedOptionIdx = ((self.selectedOptionIdx - 2) % 2) + 1
     end
 end

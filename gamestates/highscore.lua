@@ -1,7 +1,8 @@
 local Text = require 'libs.sysl-text.example.library.slog-text'
 local lume = require 'libs.lume.lume'
 local hs = require 'libs.sick'
-local input = require 'input'
+local inputs = require 'input'
+local inputR, inputL = inputs.right, inputs.left
 local drawBg = require 'drawMenuBackground'
 
 local highscore = {}
@@ -29,8 +30,9 @@ end
 function highscore:update(dt)
     self.titleTextbox:update(dt)
 
-    input:update()
-    if input:pressed 'action' then
+    inputR:update()
+    inputL:update()
+    if inputL:pressed 'action' or inputR:pressed 'action' then
         local menu = require 'gamestates.menu'
         Gamestate.switch(menu)
     end

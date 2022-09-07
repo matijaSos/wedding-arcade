@@ -2,7 +2,8 @@ local Gamestate = require 'libs.hump.gamestate'
 
 local drawBg = require 'drawMenuBackground'
 local game = require 'gamestates.game'
-local input = require 'input'
+local inputs = require 'input'
+local inputR, inputL = inputs.right, inputs.left
 
 local menuSelectPlayer = {}
 
@@ -50,17 +51,19 @@ function menuSelectPlayer:enter()
 end
 
 function menuSelectPlayer:update(dt)
-    input:update()
-    if input:pressed 'action' then
+    inputR:update()
+    inputL:update()
+
+    if inputL:pressed 'action' or inputR:pressed 'action' then
         return Gamestate.switch(
             game, availablePlayers[availablePlayersList[selectedPlayerIdx]]
         )
     end
-    if input:pressed 'right' then
+    if inputL:pressed 'right' then
         selectedPlayerIdx = selectedPlayerIdx + 1
         if selectedPlayerIdx > 3 then selectedPlayerIdx = 1 end
     end
-    if input:pressed 'left' then
+    if inputL:pressed 'left' then
         selectedPlayerIdx = selectedPlayerIdx - 1
         if selectedPlayerIdx < 1 then selectedPlayerIdx = 3 end
     end

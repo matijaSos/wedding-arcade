@@ -2,7 +2,8 @@ local lume = require 'libs.lume.lume'
 local misc = require 'misc'
 local highscore = require 'libs.sick'
 local highscoreGamestate = require 'gamestates.highscore'
-local input = require 'input'
+local inputs = require 'input'
+local inputR, inputL = inputs.right, inputs.left
 local drawBg = require 'drawMenuBackground'
 
 local saveScore = {}
@@ -37,9 +38,10 @@ function saveScore:enter(from, score, place)
 end
 
 function saveScore:update()
-    input:update()
+    inputR:update()
+    inputL:update()
 
-    if input:pressed 'action' then
+    if inputL:pressed 'action' or inputR:pressed 'action' then
         if self.selectedChar == DEL then
             self.name = self.name:sub(1, #self.name - 1)
         elseif self.selectedChar == END then
@@ -54,16 +56,16 @@ function saveScore:update()
         end
     end
 
-    if input:pressed 'right' then
+    if inputL:pressed 'right' then
         self.selectedChar = getNextChar(self.kb, self.selectedChar, 1)
     end
-    if input:pressed 'left' then
+    if inputL:pressed 'left' then
         self.selectedChar = getNextChar(self.kb, self.selectedChar, -1)
     end
-    if input:pressed 'down' then
+    if inputL:pressed 'down' then
         self.selectedChar = getNextChar(self.kb, self.selectedChar, 10)
     end
-    if input:pressed 'up' then
+    if inputL:pressed 'up' then
         self.selectedChar = getNextChar(self.kb, self.selectedChar, -10)
     end
 end
