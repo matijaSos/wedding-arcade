@@ -6,6 +6,7 @@ local lume = require 'libs.lume.lume'
 local h = {}
 h.scores = {}
 
+-- TODO(matija): I don't need this, I have all this info already in h.scores
 h.mostRecentNames = {}
 
 function h.set(filename, places)
@@ -68,7 +69,7 @@ end
 
 function h.getMostRecentNames(n)
     local occ = {}
-    local mrn = {}
+    local mrn = {} -- Most recent names without duplicates.
     
     for _, name in ipairs(h.mostRecentNames) do
         if not occ[name] then
@@ -77,7 +78,15 @@ function h.getMostRecentNames(n)
         end
     end
 
-    return table.move(mrn, 1, n, 1, {})
+    -- NOTE(matija): not supported in love 11.1
+    --return table.move(mrn, 1, n, 1, {})
+
+    local firstN = {}
+    for i=1, math.min(n, #mrn) do
+        table.insert(firstN, mrn[i])
+    end
+
+    return firstN
 end
 
 function h.save()
