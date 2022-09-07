@@ -1,6 +1,8 @@
+local Text = require 'libs.sysl-text.example.library.slog-text'
 local lume = require 'libs.lume.lume'
 local hs = require 'libs.sick'
 local input = require 'input'
+local drawBg = require 'drawMenuBackground'
 
 local highscore = {}
 
@@ -10,9 +12,23 @@ function highscore:enter(from, place)
     self.scoreFont = love.graphics.newFont(pixelFontPath, 60)
 
     self.place = place
+
+    bgAssets = drawBg.loadMenuBgAssets()
+
+    -- Title.
+    titleFont = love.graphics.newFont(pixelFontPath, 160)
+    self.titleTextbox = Text.new('left',
+    {
+        color = {1,1,1,1},
+        shadow_color = {0.5,0.5,1,0.4},
+        font = titleFont
+    })
+    self.titleTextbox:send('[bounce=10]Hall of Fame[/bounce]', nil, true)
 end
 
-function highscore:update()
+function highscore:update(dt)
+    self.titleTextbox:update(dt)
+
     input:update()
     if input:pressed 'action' then
         local menu = require 'gamestates.menu'
@@ -23,9 +39,10 @@ end
 function highscore:draw()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
+    drawBg.drawMenuBackground(bgAssets)
+
     love.graphics.setColor(0,0,0, 0.7)
     love.graphics.rectangle('fill', 0,0, w, h)
-
     love.graphics.setColor(1, 1, 1)
 
     local charW = self.scoreFont:getWidth('A')
@@ -35,7 +52,7 @@ function highscore:draw()
     local spacingX = 2 * charW
     local spacingY = charH
 
-    local startY = 0
+    local startY = h/4
 
     local placeW = 4 * charW
     local nameW = 7 * charW
@@ -57,6 +74,12 @@ function highscore:draw()
         love.graphics.print(name, self.scoreFont, nameX, y)
         love.graphics.print(lume.round(score) .. 'm', self.scoreFont, scoreX, y)
     end
+
+    -- Draw title
+    self.titleTextbox:draw(
+        w/2 - self.titleTextbox.get.width / 2,
+        startY / 2 - self.titleTextbox.get.height / 2
+    )
 end
 
 return highscore

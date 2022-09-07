@@ -3,6 +3,7 @@ local misc = require 'misc'
 local highscore = require 'libs.sick'
 local highscoreGamestate = require 'gamestates.highscore'
 local input = require 'input'
+local drawBg = require 'drawMenuBackground'
 
 local saveScore = {}
 
@@ -31,6 +32,8 @@ function saveScore:enter(from, score, place)
     for _, n in ipairs(self.mostRecentNames) do
         table.insert(self.kb, n)
     end
+
+    bgAssets = drawBg.loadMenuBgAssets()
 end
 
 function saveScore:update()
@@ -68,6 +71,8 @@ end
 function saveScore:draw()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
+    drawBg.drawMenuBackground(bgAssets)
+
     love.graphics.setColor(0,0,0, 0.7)
     love.graphics.rectangle('fill', 0,0, w, h)
 
@@ -101,6 +106,10 @@ function drawKeyboard (kb, font, selectedChar)
 
     local prevCharEndX
     for i, char in ipairs(kb) do
+        love.graphics.setColor(1, 1, 1)
+        if char == END then
+            love.graphics.setColor(0, 1, 0)
+        end
 
         local row = math.floor((i - 1) / charsPerRow)
         local column =  (i - 1) % charsPerRow
@@ -131,37 +140,5 @@ function getNextChar (kb, char, inc)
 
     return kb[newIdx]
 end
-
---[[
-function saveScore:keypressed(key)
-    if key == 'space' then
-        if self.selectedChar == DEL then
-            self.name = self.name:sub(1, #self.name - 1)
-        elseif self.selectedChar == END then
-            if #self.name > 0 then
-                highscore.add(self.name, self.score)
-                highscore.save()
-
-                Gamestate.switch(highscoreGamestate, self.place)
-            end
-        else
-            self.name = self.name .. self.selectedChar
-        end
-    end
-
-    if key == 'right' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, 1)
-    end
-    if key == 'left' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, -1)
-    end
-    if key == 'down' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, 10)
-    end
-    if key == 'up' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, -10)
-    end
-end
-]]--
 
 return saveScore
