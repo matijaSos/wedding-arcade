@@ -1,6 +1,8 @@
 local Class = require 'libs.hump.class'
 local Entity = require 'entities.Entity'
 
+local input = require 'input'
+
 local Player = Class{
     __includes = Entity
 }
@@ -47,7 +49,11 @@ end
 local wasJumpButtonDown = false
 
 function Player:update(dt, world, gravity)
-    self.secondsLeftTillXMovSpeedRecovery = math.max(self.secondsLeftTillXMovSpeedRecovery - dt, 0)
+    input:update()
+
+    self.secondsLeftTillXMovSpeedRecovery = math.max(
+        self.secondsLeftTillXMovSpeedRecovery - dt, 0
+    )
     if not (self.secondsLeftTillXMovSpeedRecovery > 0) then
       self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT
     end
@@ -58,14 +64,14 @@ function Player:update(dt, world, gravity)
     local dy = 0
 
     local xDirection = 0
-    if love.keyboard.isDown("right") then xDirection = 1 end
-    if love.keyboard.isDown("left") then xDirection = -1 end
+    if input:down("right") then xDirection = 1 end
+    if input:down("left") then xDirection = -1 end
     dx = xDirection * self.xMovSpeed * gameSpeedFactor * dt
 
     -- Apply gravity
     self.yCurrVelocity = self.yCurrVelocity + gravity * dt
 
-    if love.keyboard.isDown('space') then
+    if input:down('action') then
       if wasJumpButtonDown == false then
         if self.isGrounded then
           -- Jump!
@@ -89,9 +95,10 @@ function Player:update(dt, world, gravity)
     end
 
     -- We catch the moment during jump when jump button is released.
-    if self.isJumpDurationTracked and not love.keyboard.isDown('space') then
+    if self.isJumpDurationTracked and not input:down('action') then
         if self.yCurrVelocity < 0 -- If still going up
-           -- NOTE(matija): if jump button was held for a very short time, we wait until it reaches
+           -- NOTE(matija): if jump button was held for a very short time,
+           -- we wait until it reaches
            -- certain threshold - this way we avoid jaggedness when jumping.
            and self.jumpDuration > jumpToPeakTime * 0.33 then
             self.yCurrVelocity = self.yCurrVelocity * 0.5

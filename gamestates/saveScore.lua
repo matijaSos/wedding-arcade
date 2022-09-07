@@ -2,6 +2,7 @@ local lume = require 'libs.lume.lume'
 local misc = require 'misc'
 local highscore = require 'libs.sick'
 local highscoreGamestate = require 'gamestates.highscore'
+local input = require 'input'
 
 local saveScore = {}
 
@@ -29,6 +30,38 @@ function saveScore:enter(from, score, place)
     self.kb = lume.clone(kb)
     for _, n in ipairs(self.mostRecentNames) do
         table.insert(self.kb, n)
+    end
+end
+
+function saveScore:update()
+    input:update()
+
+    if input:pressed 'action' then
+        if self.selectedChar == DEL then
+            self.name = self.name:sub(1, #self.name - 1)
+        elseif self.selectedChar == END then
+            if #self.name > 0 then
+                highscore.add(self.name, self.score)
+                highscore.save()
+
+                Gamestate.switch(highscoreGamestate, self.place)
+            end
+        else
+            self.name = self.name .. self.selectedChar
+        end
+    end
+
+    if input:pressed 'right' then
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, 1)
+    end
+    if input:pressed 'left' then
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, -1)
+    end
+    if input:pressed 'down' then
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, 10)
+    end
+    if input:pressed 'up' then
+        self.selectedChar = getNextChar(self.kb, self.selectedChar, -10)
     end
 end
 
@@ -99,6 +132,7 @@ function getNextChar (kb, char, inc)
     return kb[newIdx]
 end
 
+--[[
 function saveScore:keypressed(key)
     if key == 'space' then
         if self.selectedChar == DEL then
@@ -128,5 +162,6 @@ function saveScore:keypressed(key)
         self.selectedChar = getNextChar(self.kb, self.selectedChar, -10)
     end
 end
+]]--
 
 return saveScore

@@ -2,6 +2,7 @@ local Gamestate = require 'libs.hump.gamestate'
 local Text = require 'libs.sysl-text.example.library.slog-text'
 
 local drawBg = require 'drawMenuBackground'
+local input = require 'input'
 
 local menuSelectPlayer = require 'gamestates.menuSelectPlayer'
 local highscore = require 'gamestates.highscore'
@@ -9,6 +10,7 @@ local highscore = require 'gamestates.highscore'
 local NEW_GAME = 'Start new game'
 local LEADERBOARD = 'Leaderboard'
 local options = { NEW_GAME, LEADERBOARD }
+
 
 local menu = {}
 
@@ -33,6 +35,21 @@ end
 
 function menu:update(dt)
     self.titleTextbox:update(dt)
+
+    input:update()
+    if input:pressed 'action' then
+        if options[self.selectedOptionIdx] == NEW_GAME then
+            return Gamestate.switch(menuSelectPlayer)
+        elseif options[self.selectedOptionIdx] == LEADERBOARD then
+            return Gamestate.switch(highscore)
+        end
+    end
+    if input:pressed 'up' then
+        self.selectedOptionIdx = (self.selectedOptionIdx % 2) + 1
+    end
+    if input:pressed 'down' then
+        self.selectedOptionIdx = ((self.selectedOptionIdx - 2) % 2) + 1
+    end
 end
 
 function menu:draw()
@@ -73,22 +90,5 @@ function getOptionText (text, isSelected)
 
     return text
 end
-
-function menu:keypressed(key)
-    if key == 'space' then
-        if options[self.selectedOptionIdx] == NEW_GAME then
-            return Gamestate.switch(menuSelectPlayer)
-        elseif options[self.selectedOptionIdx] == LEADERBOARD then
-            return Gamestate.switch(highscore)
-        end
-    end
-    if key == 'up' then
-        self.selectedOptionIdx = (self.selectedOptionIdx % 2) + 1
-    end
-    if key == 'down' then
-        self.selectedOptionIdx = ((self.selectedOptionIdx - 2) % 2) + 1
-    end
-end
-
 
 return menu

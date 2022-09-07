@@ -13,3 +13,6 @@
 [submodule "libs/lume"]
 	path = libs/lume
 	url = git@github.com:rxi/lume
+[submodule "libs/baton"]
+	path = libs/baton
+	url = git@github.com:tesselode/baton

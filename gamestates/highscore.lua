@@ -1,5 +1,6 @@
 local lume = require 'libs.lume.lume'
 local hs = require 'libs.sick'
+local input = require 'input'
 
 local highscore = {}
 
@@ -9,6 +10,14 @@ function highscore:enter(from, place)
     self.scoreFont = love.graphics.newFont(pixelFontPath, 60)
 
     self.place = place
+end
+
+function highscore:update()
+    input:update()
+    if input:pressed 'action' then
+        local menu = require 'gamestates.menu'
+        Gamestate.switch(menu)
+    end
 end
 
 function highscore:draw()
@@ -47,13 +56,6 @@ function highscore:draw()
         love.graphics.print('#' .. i, self.scoreFont, placeX, y)
         love.graphics.print(name, self.scoreFont, nameX, y)
         love.graphics.print(lume.round(score) .. 'm', self.scoreFont, scoreX, y)
-    end
-end
-
-function highscore:keypressed(key)
-    if key == 'space' then
-        local menu = require 'gamestates.menu'
-        Gamestate.switch(menu)
     end
 end
 

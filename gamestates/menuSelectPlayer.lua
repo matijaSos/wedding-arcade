@@ -2,6 +2,7 @@ local Gamestate = require 'libs.hump.gamestate'
 
 local drawBg = require 'drawMenuBackground'
 local game = require 'gamestates.game'
+local input = require 'input'
 
 local menuSelectPlayer = {}
 
@@ -49,6 +50,21 @@ function menuSelectPlayer:enter()
 end
 
 function menuSelectPlayer:update(dt)
+    input:update()
+    if input:pressed 'action' then
+        return Gamestate.switch(
+            game, availablePlayers[availablePlayersList[selectedPlayerIdx]]
+        )
+    end
+    if input:pressed 'right' then
+        selectedPlayerIdx = selectedPlayerIdx + 1
+        if selectedPlayerIdx > 3 then selectedPlayerIdx = 1 end
+    end
+    if input:pressed 'left' then
+        selectedPlayerIdx = selectedPlayerIdx - 1
+        if selectedPlayerIdx < 1 then selectedPlayerIdx = 3 end
+    end
+
 end
 
 function menuSelectPlayer:draw()
@@ -116,20 +132,6 @@ function drawPlayerAndName (img, scaleFactor, imgX, imgY, name, nameY, isSelecte
             imgY - selectionPointer:getHeight() * pointerScaleFactor - 20,
             0, pointerScaleFactor, pointerScaleFactor
         )
-    end
-end
-
-function menuSelectPlayer:keypressed(key)
-    if key == 'space' then
-        return Gamestate.switch(game, availablePlayers[availablePlayersList[selectedPlayerIdx]])
-    end
-    if key == 'right' then
-        selectedPlayerIdx = selectedPlayerIdx + 1
-        if selectedPlayerIdx > 3 then selectedPlayerIdx = 1 end
-    end
-    if key == 'left' then
-        selectedPlayerIdx = selectedPlayerIdx - 1
-        if selectedPlayerIdx < 1 then selectedPlayerIdx = 3 end
     end
 end
 

@@ -1,6 +1,7 @@
 local Gamestate = require 'libs.hump.gamestate'
 local lume = require 'libs.lume.lume'
 local highscore = require 'libs.sick'
+local input = require 'input'
 
 local saveScore = require 'gamestates.saveScore'
 
@@ -29,6 +30,30 @@ function gameOver:enter(from, score)
     subtitleFont = love.graphics.newFont(pixelFontPath, 80)
 
     --highscore.add('matija', score)
+end
+
+function gameOver:update()
+    input:update()
+    if input:pressed 'action' then
+        if buttons[selectedButtonIdx] == RESTART then
+            local menu = require 'gamestates.menu'
+            -- TODO(matija): is it ok to do switch here, given this gamestate
+            -- came here via push()? Are we continuously building a stack of
+            -- gamestates, with each new game?
+            Gamestate.switch(menu)
+        elseif buttons[selectedButtonIdx] == SAVE then
+            Gamestate.switch(saveScore, scoreAchieved, self.place)
+        end
+    end
+    if input:pressed 'right' then
+        selectedButtonIdx = selectedButtonIdx + 1
+        if selectedButtonIdx > #buttons then selectedButtonIdx = 1 end
+    end
+    if input:pressed 'left' then
+        selectedButtonIdx = selectedButtonIdx - 1
+        if selectedButtonIdx < 1 then selectedButtonIdx = #buttons end
+    end
+
 end
 
 function gameOver:draw()
@@ -88,28 +113,6 @@ function getButtonText (text, isSelected)
         return '> ' .. text .. ' <'
     else
         return text
-    end
-end
-
-function gameOver:keypressed(key)
-    if key == 'space' then
-        if buttons[selectedButtonIdx] == RESTART then
-            local menu = require 'gamestates.menu'
-            -- TODO(matija): is it ok to do switch here, given this gamestate
-            -- came here via push()? Are we continuously building a stack of
-            -- gamestates, with each new game?
-            Gamestate.switch(menu)
-        elseif buttons[selectedButtonIdx] == SAVE then
-            Gamestate.switch(saveScore, scoreAchieved, self.place)
-        end
-    end
-    if key == 'right' then
-        selectedButtonIdx = selectedButtonIdx + 1
-        if selectedButtonIdx > #buttons then selectedButtonIdx = 1 end
-    end
-    if key == 'left' then
-        selectedButtonIdx = selectedButtonIdx - 1
-        if selectedButtonIdx < 1 then selectedButtonIdx = #buttons end
     end
 end
 
