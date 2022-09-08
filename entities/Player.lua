@@ -13,6 +13,7 @@ local PLAYER_X_MOV_SPEED_DEFAULT = 600
 function Player:init(x, y, playerConfig)
     self.isPlayer = true
     self.img = love.graphics.newImage(playerConfig.imgPath)
+    self.imgScale = playerConfig.scaleFactorInGame
 
     -- How fast player moves along the X axis. A constant for now.
     self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT
@@ -33,7 +34,7 @@ function Player:init(x, y, playerConfig)
 
     -- TODO(matija): we don't want to have hardcoded scale factor. Maybe not even
     -- a scale factor at all, I should edit the image itself?
-    Entity.init(self, x, y, self.img:getWidth()*0.2, self.img:getHeight()*0.2)
+    Entity.init(self, x, y, self.img:getWidth() * self.imgScale, self.img:getHeight() * self.imgScale)
 end
 
 function Player:draw()
@@ -42,7 +43,7 @@ function Player:draw()
     -- TODO(matija): If I scale down img, I also need to scale down its width
     -- and height as I save it, otherwise collision engine doesn't work since it
     -- has wrong info.
-    love.graphics.draw(self.img, self.x, self.y, 0, 0.2, 0.2)
+    love.graphics.draw(self.img, self.x, self.y, 0, self.imgScale, self.imgScale)
 
     --love.graphics.rectangle('line', self:getRect())
 end
