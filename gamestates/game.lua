@@ -21,12 +21,23 @@ TILE_SIZE = 24
 local gravity = 3000
 ONE_METER_IN_PX = 100
 gameSpeedFactor = 0.8
+gameEffect = nil  -- Or 'coffee' or 'brandy'
 
 local game = {}
 
 local scanline
 local player
 local entities
+
+local ballonsBackground = love.graphics.newImage('assets/balloons.png')
+local ballonsBackgroundCoffee = love.graphics.newImage('assets/balloons_coffee.png')
+local ballonsBackgroundBrandy = love.graphics.newImage('assets/balloons_brandy.png')
+local cityBackground = love.graphics.newImage('assets/city_and_sidewalk_1080.png')
+local cityBackgroundCoffee = love.graphics.newImage('assets/city_and_sidewalk_coffee_1080.png')
+local cityBackgroundBrandy = love.graphics.newImage('assets/city_and_sidewalk_brandy_1080.png')
+local backgroundScroll = 0
+local BACKGROUND_SCROLL_SPEED = 0.02
+
 
 function game:enter(oldState, playerConfig)
     math.randomseed( os.time() )
@@ -89,8 +100,10 @@ function game:update(dt)
       e:update(dt, world, gravity)
     end
 
-    -- Update score
     metersProgressed = (player.x - startingX) / ONE_METER_IN_PX
+    backgroundScroll = metersProgressed * BACKGROUND_SCROLL_SPEED
+
+    -- Update score
     score = math.max(score, metersProgressed)
 
     -- Increase game speed
@@ -115,7 +128,38 @@ function game:update(dt)
     maybeGenerateNewCollectables(dt)
 end
 
+function drawBackground(backgroundScroll)
+    local width, height = love.graphics.getWidth(), love.graphics.getHeight()
+
+    love.graphics.setColor(1, 1, 1)
+
+    local activeCityBackground, activeBalloonsBackground = getActiveBackgrounds()
+
+    local ballonsWidth = activeBalloonsBackground:getWidth()
+    local ballonsRatio = ballonsWidth / width
+    for i = backgroundScroll / ballonsRatio, width / ballonsWidth do
+      love.graphics.draw(activeBalloonsBackground, i * ballonsWidth, 0)
+    end
+
+    local yPos = height - activeCityBackground:getHeight()
+    local cityWidth = activeCityBackground:getWidth()
+
+    local cityRatio = cityWidth / width
+    for i = backgroundScroll / cityRatio, width / cityWidth  do
+      love.graphics.draw(activeCityBackground, i * cityWidth, yPos)
+    end
+end
+
+function getActiveBackgrounds()
+  if gameEffect == 'coffee' then return cityBackgroundCoffee, ballonsBackgroundCoffee end
+  if gameEffect == 'brandy' then return cityBackgroundBrandy, ballonsBackgroundBrandy end
+  return cityBackground, ballonsBackground
+end
+
+
 function game:draw()
+    drawBackground(-backgroundScroll)
+
     camera:attach()
 
     for i, e in ipairs(entities) do
