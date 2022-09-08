@@ -7,12 +7,12 @@ local drawBg = require 'drawMenuBackground'
 
 local highscore = {}
 
-function highscore:enter(from, place)
+function highscore:enter(from, name)
     -- TODO(matija): extract this path somewhere, I keep duplicating it.
     local pixelFontPath = 'assets/computer_pixel-7.ttf'
     self.scoreFont = love.graphics.newFont(pixelFontPath, 60)
 
-    self.place = place
+    self.name = name
 
     bgAssets = drawBg.loadMenuBgAssets()
 
@@ -83,7 +83,7 @@ function highscore:draw()
             love.graphics.setColor(1, 1, 1)
         end
 
-        if self.place and i == self.place then
+        if self.name and name == self.name then
             love.graphics.setColor(0, 1, 0) -- Green
         end
 
