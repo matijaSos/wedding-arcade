@@ -5,11 +5,12 @@ local Musician = Class{
     __includes = Entity
 }
 
-function Musician:init(scanline, y, initialDirectionY, maxDistYFromCenter, moveSpeedY, img, imgScale)
+function Musician:init(scanline, scanlineDx, y, initialDirectionY, maxDistYFromCenter, moveSpeedY, img, imgScale)
     self.isMusician = true
     self.img = img
     self.imgScale = imgScale
     self.scanline = scanline
+    self.scanlineDx = scanlineDx
     self.centerCameraRelY = y
     self.cameraRelY = y
     self.maxDistYFromCenter = maxDistYFromCenter
@@ -20,7 +21,7 @@ function Musician:init(scanline, y, initialDirectionY, maxDistYFromCenter, moveS
     -- a scale factor at all, I should edit the image itself?
     Entity.init(
       self,
-      scanline.x,
+      self.scanline.x + self.scanlineDx,
       cameraRelYToWorldY(self.cameraRelY),
       self.img:getWidth() * self.imgScale,
       self.img:getHeight() * self.imgScale
@@ -39,7 +40,7 @@ end
 function Musician:update(dt, world, gravity)
     local dy = self.directionY * self.moveSpeedY * gameSpeedFactor * dt
 
-    local goalX = self.scanline.x
+    local goalX = self.scanline.x + self.scanlineDx
     local goalY = cameraRelYToWorldY(self.cameraRelY + dy)
 
     local colFilter = function (item, other)
