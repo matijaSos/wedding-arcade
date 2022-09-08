@@ -58,6 +58,7 @@ function Player:update(dt, world, gravity)
     )
     if not (self.secondsLeftTillXMovSpeedRecovery > 0) then
       self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT
+      gameEffect = nil
     end
 
     local jumpToPeakTime = self.jumpingSpeed / gravity
@@ -124,10 +125,12 @@ function Player:update(dt, world, gravity)
           if other.isBrandy then
             self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT * 0.66
             self.secondsLeftTillXMovSpeedRecovery = 2
+            gameEffect = 'brandy'
           end
           if other.isCoffee then
             self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT * 1.33
             self.secondsLeftTillXMovSpeedRecovery = 2
+            gameEffect = 'coffee'
           end
           other:collect()
           return 'cross'
