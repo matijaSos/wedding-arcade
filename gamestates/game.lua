@@ -28,6 +28,12 @@ local scanline
 local player
 local entities
 
+local ballonsBackground = love.graphics.newImage('assets/balloons.png')
+local cityBackground = love.graphics.newImage('assets/city_and_sidewalk_1080.png')
+local backgroundScroll = 0
+local BACKGROUND_SCROLL_SPEED = 0.02
+
+
 function game:enter(oldState, playerConfig)
     math.randomseed( os.time() )
 
@@ -89,8 +95,10 @@ function game:update(dt)
       e:update(dt, world, gravity)
     end
 
-    -- Update score
     metersProgressed = (player.x - startingX) / ONE_METER_IN_PX
+    backgroundScroll = metersProgressed * BACKGROUND_SCROLL_SPEED
+
+    -- Update score
     score = math.max(score, metersProgressed)
 
     -- Increase game speed
@@ -115,7 +123,30 @@ function game:update(dt)
     maybeGenerateNewCollectables(dt)
 end
 
+function drawBackground(backgroundScroll)
+    local width, height = love.graphics.getWidth(), love.graphics.getHeight()
+
+    love.graphics.setColor(1, 1, 1)
+
+    local ballonsWidth = ballonsBackground:getWidth()
+    local ballonsRatio = ballonsWidth / width
+    for i = backgroundScroll / ballonsRatio, width / ballonsWidth do
+      love.graphics.draw(ballonsBackground, i * ballonsWidth, 0)
+    end
+
+    local yPos = height - cityBackground:getHeight()
+    local cityWidth = cityBackground:getWidth()
+
+    local cityRatio = cityWidth / width
+    for i = backgroundScroll / cityRatio, width / cityWidth  do
+      love.graphics.draw(cityBackground, i * cityWidth, yPos)
+    end
+end
+
+
 function game:draw()
+    drawBackground(-backgroundScroll)
+
     camera:attach()
 
     for i, e in ipairs(entities) do
