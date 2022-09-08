@@ -62,17 +62,17 @@ function game:enter(oldState, playerConfig)
     local musician1Img = love.graphics.newImage('assets/guitar-player.png')
     local musician1ImgScale = 0.4
     local musician2Img = love.graphics.newImage('assets/guitar-player2.png')
-    local musician2ImgScale = 0.5
+    local musician2ImgScale = 0.45
     local musician3Img = love.graphics.newImage('assets/guitar-player3.png')
-    local musician3ImgScale = 0.5
+    local musician3ImgScale = 0.45
     local musicians = {
       Musician(scanline, 0, 200, 1, 150, 200, musician1Img, musician1ImgScale),
       Musician(scanline, 20, 300, -1, 150, 300, musician2Img, musician2ImgScale),
       Musician(scanline, -20, 500, -1, 100, 250, musician3Img, musician3ImgScale),
-      Musician(scanline, 5, 600, 1, 100, 300, musician2Img, musician1ImgScale),
-      Musician(scanline, 25, 650, 1, 200, 200, musician1Img, musician3ImgScale),
+      Musician(scanline, 5, 600, 1, 100, 300, musician2Img, musician2ImgScale),
+      Musician(scanline, 25, 650, 1, 200, 200, musician1Img, musician1ImgScale),
       Musician(scanline, -10, 800, 1, 200, 300, musician2Img, musician2ImgScale),
-      Musician(scanline, -25, 900, -1, 150, 250, musician3Img, musician1ImgScale)
+      Musician(scanline, -25, 900, -1, 150, 250, musician3Img, musician3ImgScale)
     }
     addEntities(musicians)
 end
