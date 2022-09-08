@@ -33,6 +33,17 @@ lib.filterArray = function (array, p)
   return filtered
 end
 
+lib.maxElemInArray = function (array)
+    if #array == 0 then return nil end
+
+    local maxElem = array[1]
+    for _, v in ipairs(array) do
+        maxElem = math.max(maxElem, v)
+    end
+
+    return maxElem
+end
+
 local function clamp01(x)
     return math.min(math.max(x, 0), 1)
 end

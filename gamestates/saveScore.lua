@@ -49,7 +49,7 @@ function saveScore:update()
                 highscore.add(self.name, self.score)
                 highscore.save()
 
-                Gamestate.switch(highscoreGamestate, self.place)
+                Gamestate.switch(highscoreGamestate, self.name)
             end
         else
             self.name = self.name .. self.selectedChar

@@ -1,6 +1,7 @@
 -- SICK: Simple Indicative of Competitive sKill
 -- aka libhighscore
 
+local misc = require 'misc'
 local lume = require 'libs.lume.lume'
 
 local h = {}
@@ -47,9 +48,30 @@ local function sortScore(a, b)
    return a[1] > b[1]
 end
 
+local function getLeaderboardIfSaved(name, score)
+   local nameFilterFn = function (entry) return entry[2] == name end
+   local prevMaxScoreForName = misc.maxElemInArray(
+      lume.map(
+         lume.filter(h.scores, nameFilterFn),
+         function (entry) return entry[1] end
+      )
+    )
+    local maxScoreForName = score
+    if prevMaxScoreForName then
+        maxScoreForName = math.max(maxScoreForName, prevMaxScoreForName)
+    end
+    local newScores = lume.reject(h.scores, nameFilterFn)
+    table.insert(
+        newScores,
+        {maxScoreForName, name}
+    )
+    table.sort(newScores, sortScore)
+
+    return newScores
+end
+
 function h.add(name, score)
-   h.scores[#h.scores+1] = {score, name}
-   table.sort(h.scores, sortScore)
+    h.scores = getLeaderboardIfSaved(name, score)
 
     table.insert(h.mostRecentNames, 1, name)
 end
@@ -57,8 +79,8 @@ end
 -- For the given score, check which place it would assume
 -- in a leaderboard table. Does not add the score.
 function h.checkPlace(score)
-    -- TODO(matija): we could use binary search here.
 
+    -- TODO(matija): we could use binary search here.
     for i, entry in ipairs(h.scores) do
         if entry[1] < score then
             return i

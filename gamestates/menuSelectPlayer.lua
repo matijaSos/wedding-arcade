@@ -18,16 +18,19 @@ local availablePlayers = {}
 availablePlayers[HRVOJE] = {
     name = HRVOJE,
     scaleFactorInMenu = 0.4,
+    scaleFactorInGame = 0.2,
     imgPath = 'assets/player_hrvoje.png'
 }
 availablePlayers[NINA] = {
-    name = NINA, 
+    name = NINA,
     scaleFactorInMenu = 0.4,
+    scaleFactorInGame = 0.2,
     imgPath = 'assets/player_nina.png'
 }
 availablePlayers[ZIZI] = {
     name = ZIZI,
     scaleFactorInMenu = 0.35,
+    scaleFactorInGame = 0.175,
     imgPath = 'assets/player_zizi.png'
 }
 
