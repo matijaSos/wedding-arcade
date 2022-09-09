@@ -137,7 +137,7 @@ function drawBackground(backgroundScroll)
 
     local ballonsWidth = activeBalloonsBackground:getWidth()
     local ballonsRatio = ballonsWidth / width
-    for i = backgroundScroll / ballonsRatio, width / ballonsWidth do
+    for i = backgroundScroll / ballonsRatio - 1, width / ballonsWidth do
       love.graphics.draw(activeBalloonsBackground, i * ballonsWidth, 0)
     end
 
@@ -145,7 +145,7 @@ function drawBackground(backgroundScroll)
     local cityWidth = activeCityBackground:getWidth()
 
     local cityRatio = cityWidth / width
-    for i = backgroundScroll / cityRatio, width / cityWidth  do
+    for i = backgroundScroll / cityRatio - 1, width / cityWidth  do
       love.graphics.draw(activeCityBackground, i * cityWidth, yPos)
     end
 end
