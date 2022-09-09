@@ -35,9 +35,9 @@ local ballonsBackgroundBrandy = love.graphics.newImage('assets/balloons_brandy.p
 local cityBackground = love.graphics.newImage('assets/city_and_sidewalk_1080.png')
 local cityBackgroundCoffee = love.graphics.newImage('assets/city_and_sidewalk_coffee_1080.png')
 local cityBackgroundBrandy = love.graphics.newImage('assets/city_and_sidewalk_brandy_1080.png')
+local pixelFontPath = 'assets/computer_pixel-7.ttf'
 local backgroundScroll = 0
 local BACKGROUND_SCROLL_SPEED = 0.02
-
 
 function game:enter(oldState, playerConfig)
     math.randomseed( os.time() )
@@ -49,7 +49,7 @@ function game:enter(oldState, playerConfig)
     entities = {}
 
     love.graphics.setBackgroundColor(1, 1, 1)
-    hudFont = love.graphics.newFont(18)
+    hudFont = love.graphics.newFont(pixelFontPath, 64)
 
     world = bump.newWorld(TILE_SIZE)
 
@@ -156,7 +156,6 @@ function getActiveBackgrounds()
   return cityBackground, ballonsBackground
 end
 
-
 function game:draw()
     drawBackground(-backgroundScroll)
 
@@ -166,24 +165,12 @@ function game:draw()
       e:draw()
     end
 
-    -- For debugging/testing.
-    -- love.graphics.line(0, -100, 5000, -100)
-    -- love.graphics.line(
-    --     0, love.graphics.getHeight() + 100, 5000,
-    --     love.graphics.getHeight() + 100
-    -- )
-
     camera:detach()
 
     -- HUD
     love.graphics.setFont(hudFont)
     love.graphics.setColor(0, 0, 0)
-    love.graphics.print("Score: " .. tostring(lume.round(score)) .. "m", 10, 10)
-    love.graphics.print("gameSpeedFactor: " .. tostring(gameSpeedFactor), 10, 30)
-    love.graphics.print(
-      'isJumpDurationTracked: ' .. tostring(player.isJumpDurationTracked), 10, 50
-    )
-    love.graphics.print('jumpDuration: ' .. tostring(player.jumpDuration), 10, 70)
+    love.graphics.printf("Score: " .. tostring(lume.round(score)) .. "m", 10, 10, love.graphics.getWidth(), 'center')
 end
 
 function game:leave()
