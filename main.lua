@@ -4,6 +4,9 @@ local highscore = require 'libs.sick'
 local menu = require 'gamestates.menu'
 
 function love.load()
+    -- This file is stored in special folder where Love files are saved.
+    -- Check https://love2d.org/wiki/love.filesystem for detailed info.
+    -- On archlinux, this resolves to ~/.local/share/love/... .
     highscore.set('highscore.txt', 10)
 
     -- love.window.setFullscreen(true, 'desktop')

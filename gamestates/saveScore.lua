@@ -13,7 +13,7 @@ local DEL, END = 'DEL', 'END'
 local kb = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-    'U', 'W', 'X', 'Y', 'Z', '-', '.', '!', DEL, END
+    'U', 'W', 'X', 'Y', 'Z', '-', '.', '!', DEL, END, BACK
 }
 
 function saveScore:enter(from, score, place)
@@ -23,7 +23,7 @@ function saveScore:enter(from, score, place)
 
     self.score = score
     self.place = place
-    self.selectedChar = 'A'
+    self.selectedInput = 'A'
 
     self.name = ''
 
@@ -42,31 +42,34 @@ function saveScore:update()
     inputL:update()
 
     if inputL:pressed 'action' or inputR:pressed 'action' then
-        if self.selectedChar == DEL then
+        if self.selectedInput == DEL then
             self.name = self.name:sub(1, #self.name - 1)
-        elseif self.selectedChar == END then
-            if #self.name > 0 then
+        elseif self.selectedInput == END then
+            if #self.name > 0 and (lume.find(kb, self.name) == nil) then
                 highscore.add(self.name, self.score)
                 highscore.save()
 
                 Gamestate.switch(highscoreGamestate, self.name)
             end
+        elseif lume.find(self.mostRecentNames, self.selectedInput) then
+            self.name = self.selectedInput
+            self.selectedInput = END
         else
-            self.name = self.name .. self.selectedChar
+            self.name = self.name .. self.selectedInput
         end
     end
 
     if inputL:pressed 'right' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, 1)
+        self.selectedInput = getNextChar(self.kb, self.selectedInput, 1)
     end
     if inputL:pressed 'left' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, -1)
+        self.selectedInput = getNextChar(self.kb, self.selectedInput, -1)
     end
     if inputL:pressed 'down' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, 10)
+        self.selectedInput = getNextChar(self.kb, self.selectedInput, 10)
     end
     if inputL:pressed 'up' then
-        self.selectedChar = getNextChar(self.kb, self.selectedChar, -10)
+        self.selectedInput = getNextChar(self.kb, self.selectedInput, -10)
     end
 end
 
@@ -82,16 +85,16 @@ function saveScore:draw()
     love.graphics.setFont(self.titleFont)
     love.graphics.printf(
         'Your Score: ' .. lume.round(self.score) ..
-        ' . . . #' .. self.place,
+        'm . . . #' .. self.place,
         0, h/6, w, 'center'
     )
 
     love.graphics.printf(self.name, 0, h/6 + 100, w, 'center')
 
-    drawKeyboard(self.kb, self.kbFont, self.selectedChar)
+    drawKeyboard(self.kb, self.kbFont, self.selectedInput)
 end
 
-function drawKeyboard (kb, font, selectedChar)
+function drawKeyboard (kb, font, selectedInput)
     love.graphics.setColor(1, 1, 1)
 
     local charsPerRow = 10
@@ -124,7 +127,7 @@ function drawKeyboard (kb, font, selectedChar)
 
         local charToPrint = char
         local charToPrintX = charX
-        if char == selectedChar then
+        if char == selectedInput then
             charToPrint = '>' .. char .. '<'
             charToPrintX = charToPrintX - font:getWidth('>')
         end

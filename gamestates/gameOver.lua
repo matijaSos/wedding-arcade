@@ -14,7 +14,7 @@ local scoreAchieved
 local SAVE = 'Save'
 local RESTART = 'Restart'
 
-local buttons = { SAVE, RESTART }
+local buttons = { RESTART, SAVE }
 local selectedButtonIdx
 
 function gameOver:enter(from, score)
@@ -84,15 +84,15 @@ function gameOver:draw()
     local buttonHalfDist = 150
     local buttonY = h/4 + 150 + 100
 
-    local saveButtonX = w/2 -
-        love.graphics.newText(subtitleFont, SAVE):getWidth() -
-        buttonHalfDist
+    local saveButtonX = w/2 + buttonHalfDist
     if buttons[selectedButtonIdx] == SAVE then
         saveButtonX = saveButtonX -
             love.graphics.newText(subtitleFont, '> '):getWidth()
     end
 
-    local resetButtonX = w/2 + buttonHalfDist
+    local resetButtonX = w/2 -
+      love.graphics.newText(subtitleFont, SAVE):getWidth() -
+      buttonHalfDist
     if buttons[selectedButtonIdx] == RESTART then
         resetButtonX = resetButtonX -
             love.graphics.newText(subtitleFont, '> '):getWidth()
