@@ -17,7 +17,14 @@ function Scanline:draw()
 end
 
 function Scanline:update(dt)
-    local goalX = self.x + self.xMovSpeed * gameSpeedFactor * dt
+    -- TODO: This adjustedXMovSpeed is heavily hardcoded to work for the current
+    -- speeds of scanline, player, and how gameSpeedFactor behaves, so if any of those change,
+    -- this should also be updated, or ideally made less hardcoded.
+    -- The point of adjustment here is to make scanline relatively faster compared to player
+    -- as game progresses.
+    local adjustedXMovSpeed = self.xMovSpeed + math.min(1, (math.max(0, gameSpeedFactor - 1) / 2)) * 150
+
+    local goalX = self.x + adjustedXMovSpeed * gameSpeedFactor * dt
     local colFilter = function (item, other)
         return 'cross'
     end
