@@ -8,9 +8,9 @@ local inputR, inputL = inputs.right, inputs.left
 local menuSelectPlayer = {}
 
 -- TODO(matija): extract players info in a separate file.
-local HRVOJE = 'Hrvoje'
-local NINA = 'Nina'
-local ZIZI = 'Zizi'
+local HRVOJE = 'Alpha Wasp'
+local NINA = 'Minecraft Wasp'
+local ZIZI = 'Beta Wasp'
 -- TODO(matija): derive this list from the table below, via lume.keys()
 local availablePlayersList = { HRVOJE, NINA, ZIZI }
 
@@ -19,19 +19,19 @@ availablePlayers[HRVOJE] = {
     name = HRVOJE,
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.2,
-    imgPath = 'assets/player_hrvoje.png'
+    imgPath = 'assets/wasp_1.png'
 }
 availablePlayers[NINA] = {
     name = NINA,
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.2,
-    imgPath = 'assets/player_nina.png'
+    imgPath = 'assets/minecraft-wasp.png'
 }
 availablePlayers[ZIZI] = {
     name = ZIZI,
-    scaleFactorInMenu = 0.35,
-    scaleFactorInGame = 0.175,
-    imgPath = 'assets/player_zizi.png'
+    scaleFactorInMenu = 0.25,
+    scaleFactorInGame = 0.15,
+    imgPath = 'assets/wasp-beta.png'
 }
 
 local selectedPlayerIdx
@@ -80,7 +80,7 @@ function menuSelectPlayer:draw()
 
     love.graphics.setColor(0, 0, 0)
     love.graphics.setFont(titleFont)
-    love.graphics.printf('Choose your koom:', 0, h/4, w, 'center')
+    love.graphics.printf('Choose your player:', 0, h/4, w, 'center')
 
      -- Draw 3 choices - Hrvoje, Zizi, Nina
     local hrvojeScaleFactor = availablePlayers[HRVOJE].scaleFactorInMenu

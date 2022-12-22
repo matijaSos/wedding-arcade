@@ -30,7 +30,7 @@ function menu:enter()
     {
         font = titleFont
     })
-    self.titleTextbox:send('[bounce=10]Koom Escape[/bounce]', nil, true)
+    self.titleTextbox:send('[bounce=10]Wasp Escape[/bounce]', nil, true)
 
 end
 
