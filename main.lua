@@ -9,8 +9,8 @@ function love.load()
     -- On archlinux, this resolves to ~/.local/share/love/... .
     highscore.set('highscore.txt', 10)
 
-    love.window.setFullscreen(true, 'desktop')
-    --love.window.setMode(1920, 1080)
+    --love.window.setFullscreen(true, 'desktop')
+    love.window.setMode(1920, 1080)
 
     -- Print joystick info.
     local joysticks = love.joystick.getJoysticks()
