@@ -18,13 +18,13 @@ local availablePlayers = {}
 availablePlayers[HRVOJE] = {
     name = HRVOJE,
     scaleFactorInMenu = 0.4,
-    scaleFactorInGame = 0.2,
+    scaleFactorInGame = 0.25,
     imgPath = 'assets/wasp_1.png'
 }
 availablePlayers[NINA] = {
     name = NINA,
     scaleFactorInMenu = 0.4,
-    scaleFactorInGame = 0.2,
+    scaleFactorInGame = 0.25,
     imgPath = 'assets/minecraft-wasp.png'
 }
 availablePlayers[ZIZI] = {
@@ -80,7 +80,7 @@ function menuSelectPlayer:draw()
 
     love.graphics.setColor(0, 0, 0)
     love.graphics.setFont(titleFont)
-    love.graphics.printf('Choose your player:', 0, h/4, w, 'center')
+    love.graphics.printf('Choose your wasp:', 0, h/4, w, 'center')
 
      -- Draw 3 choices - Hrvoje, Zizi, Nina
     local hrvojeScaleFactor = availablePlayers[HRVOJE].scaleFactorInMenu

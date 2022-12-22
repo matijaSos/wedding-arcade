@@ -11,8 +11,8 @@ function Coffee:init(x, y)
   Collectable.init(
     self,
     x, y,
-    love.graphics.newImage('assets/coffee.png'),
-    0.07
+    love.graphics.newImage('assets/honeypot.png'),
+    0.2
   )
 end
 

@@ -70,11 +70,11 @@ function game:enter(oldState, playerConfig)
     score = 0
     startingX = platforms[1].x
 
-    local musician1Img = love.graphics.newImage('assets/guitar-player.png')
-    local musician1ImgScale = 0.4
-    local musician2Img = love.graphics.newImage('assets/guitar-player2.png')
+    local musician1Img = love.graphics.newImage('assets/php-logo.png')
+    local musician1ImgScale = 0.3
+    local musician2Img = love.graphics.newImage('assets/jquery-logo.png')
     local musician2ImgScale = 0.45
-    local musician3Img = love.graphics.newImage('assets/guitar-player3.png')
+    local musician3Img = love.graphics.newImage('assets/spring-logo.png')
     local musician3ImgScale = 0.45
     local musicians = {
       Musician(scanline, 0, 200, 1, 150, 200, musician1Img, musician1ImgScale),
