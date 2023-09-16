@@ -1,7 +1,7 @@
 
 local loadMenuBgAssets = function ()
     return {
-        cityBgImg = love.graphics.newImage('assets/city_and_sidewalk_1080.png'),
+        cityBgImg = love.graphics.newImage('assets/city_blue.png'),
         balloonsBgImg = love.graphics.newImage('assets/balloons.png')
     }
 end

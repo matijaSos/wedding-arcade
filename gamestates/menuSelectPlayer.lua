@@ -8,27 +8,27 @@ local inputR, inputL = inputs.right, inputs.left
 local menuSelectPlayer = {}
 
 -- TODO(matija): extract players info in a separate file.
-local HRVOJE = 'Alpha Wasp'
-local NINA = 'Minecraft Wasp'
-local ZIZI = 'Beta Wasp'
+local ALPHA_WASP = 'Alpha Wasp'
+local MINECRAFT_WASP = 'Minecraft Wasp'
+local BETA_WASP = 'Beta Wasp'
 -- TODO(matija): derive this list from the table below, via lume.keys()
-local availablePlayersList = { HRVOJE, NINA, ZIZI }
+local availablePlayersList = { ALPHA_WASP, MINECRAFT_WASP, BETA_WASP }
 
 local availablePlayers = {}
-availablePlayers[HRVOJE] = {
-    name = HRVOJE,
+availablePlayers[ALPHA_WASP] = {
+    name = ALPHA_WASP,
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.25,
     imgPath = 'assets/wasp_1.png'
 }
-availablePlayers[NINA] = {
-    name = NINA,
+availablePlayers[MINECRAFT_WASP] = {
+    name = MINECRAFT_WASP,
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.25,
     imgPath = 'assets/minecraft-wasp.png'
 }
-availablePlayers[ZIZI] = {
-    name = ZIZI,
+availablePlayers[BETA_WASP] = {
+    name = BETA_WASP,
     scaleFactorInMenu = 0.25,
     scaleFactorInGame = 0.15,
     imgPath = 'assets/wasp-beta.png'
@@ -46,9 +46,9 @@ function menuSelectPlayer:enter()
 
     bgAssets = drawBg.loadMenuBgAssets()
 
-    hrvojeImg = love.graphics.newImage(availablePlayers[HRVOJE].imgPath)
-    ninaImg = love.graphics.newImage(availablePlayers[NINA].imgPath)
-    ziziImg = love.graphics.newImage(availablePlayers[ZIZI].imgPath)
+    hrvojeImg = love.graphics.newImage(availablePlayers[ALPHA_WASP].imgPath)
+    ninaImg = love.graphics.newImage(availablePlayers[MINECRAFT_WASP].imgPath)
+    ziziImg = love.graphics.newImage(availablePlayers[BETA_WASP].imgPath)
 
     selectionPointer = love.graphics.newImage('assets/red_arrow.png')
 end
@@ -70,7 +70,6 @@ function menuSelectPlayer:update(dt)
         selectedPlayerIdx = selectedPlayerIdx - 1
         if selectedPlayerIdx < 1 then selectedPlayerIdx = 3 end
     end
-
 end
 
 function menuSelectPlayer:draw()
@@ -80,46 +79,46 @@ function menuSelectPlayer:draw()
 
     love.graphics.setColor(0, 0, 0)
     love.graphics.setFont(titleFont)
-    love.graphics.printf('Choose your wasp:', 0, h/4, w, 'center')
+    love.graphics.printf('Choose your wasp:', 0, h / 4, w, 'center')
 
-     -- Draw 3 choices - Hrvoje, Zizi, Nina
-    local hrvojeScaleFactor = availablePlayers[HRVOJE].scaleFactorInMenu
+    -- Draw 3 choices - Hrvoje, Zizi, Nina
+    local hrvojeScaleFactor = availablePlayers[ALPHA_WASP].scaleFactorInMenu
     -- TODO(matija): have a smarter way of determining this value?
-    local playerNameY = h/2 + 150
+    local playerNameY = h / 2 + 150
     local spaceBetween = (w - 3 * hrvojeImg:getWidth() * hrvojeScaleFactor) / 4
 
     -- Draw Hrvoje
     local hrvojeX = spaceBetween
-    local hrvojeY = h/2 - hrvojeImg:getHeight() * hrvojeScaleFactor / 2 
+    local hrvojeY = h / 2 - hrvojeImg:getHeight() * hrvojeScaleFactor / 2
     drawPlayerAndName(hrvojeImg, hrvojeScaleFactor, hrvojeX, hrvojeY,
-        HRVOJE, playerNameY,
-        availablePlayersList[selectedPlayerIdx] == HRVOJE
+        ALPHA_WASP, playerNameY,
+        availablePlayersList[selectedPlayerIdx] == ALPHA_WASP
     )
 
     -- Draw Nina
-    local ninaScaleFactor = availablePlayers[NINA].scaleFactorInMenu
-    local ninaX = spaceBetween * 2 + hrvojeImg:getWidth() * hrvojeScaleFactor 
-    local ninaY = h/2 - ninaImg:getHeight() * ninaScaleFactor / 2
+    local ninaScaleFactor = availablePlayers[MINECRAFT_WASP].scaleFactorInMenu
+    local ninaX = spaceBetween * 2 + hrvojeImg:getWidth() * hrvojeScaleFactor
+    local ninaY = h / 2 - ninaImg:getHeight() * ninaScaleFactor / 2
     drawPlayerAndName(ninaImg, ninaScaleFactor, ninaX, ninaY,
-        NINA, playerNameY,
-        availablePlayersList[selectedPlayerIdx] == NINA
+        MINECRAFT_WASP, playerNameY,
+        availablePlayersList[selectedPlayerIdx] == MINECRAFT_WASP
     )
 
     -- Draw Zizi
-    local ziziScaleFactor = availablePlayers[ZIZI].scaleFactorInMenu
+    local ziziScaleFactor = availablePlayers[BETA_WASP].scaleFactorInMenu
     local ziziX = spaceBetween * 3 + hrvojeImg:getWidth() * hrvojeScaleFactor + ninaImg:getWidth() * ninaScaleFactor
-    local ziziY = h/2 - ziziImg:getHeight() * ziziScaleFactor / 2
+    local ziziY = h / 2 - ziziImg:getHeight() * ziziScaleFactor / 2
     drawPlayerAndName(ziziImg, ziziScaleFactor, ziziX, ziziY,
-        ZIZI, playerNameY,
-        availablePlayersList[selectedPlayerIdx] == ZIZI
+        BETA_WASP, playerNameY,
+        availablePlayersList[selectedPlayerIdx] == BETA_WASP
     )
 end
 
-function drawPlayerAndName (img, scaleFactor, imgX, imgY, name, nameY, isSelected)
+function drawPlayerAndName(img, scaleFactor, imgX, imgY, name, nameY, isSelected)
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(img,
-        imgX, imgY, 
-        0, 
+        imgX, imgY,
+        0,
         scaleFactor, scaleFactor
     )
 
