@@ -16,12 +16,15 @@ function Monster:init(scanline, scanlineDx, x, y, maxDistYFromCenter, moveSpeedY
   self.cameraRelY = y
   self.maxDistYFromCenter = maxDistYFromCenter
   self.moveSpeedY = moveSpeedY
+  self.monsterWidth = self.img:getWidth() * self.imgScale
+  self.headOffsetX = 513 * self.imgScale + 256 / 2 * self.imgScale
+  self.headOffsetY = 276 * self.imgScale + 88 / 2 * self.imgScale
 
   -- TODO(matija): we don't want to have hardcoded scale factor. Maybe not even
   -- a scale factor at all, I should edit the image itself?
   Entity.init(
     self,
-    x,
+    scanline.x - self.headOffsetX,
     cameraRelYToWorldY(self.cameraRelY),
     self.img:getWidth() * self.imgScale,
     self.img:getHeight() * self.imgScale
@@ -31,8 +34,8 @@ function Monster:init(scanline, scanlineDx, x, y, maxDistYFromCenter, moveSpeedY
 end
 
 local function rectStartToHeadCenter(self)
-  local headCenterX = self.x + 513 * self.imgScale + 256 / 2 * self.imgScale
-  local headCenterY = self.y + 276 * self.imgScale + 88 / 2 * self.imgScale
+  local headCenterX = self.x + self.headOffsetX
+  local headCenterY = self.y + self.headOffsetY
   return headCenterX, headCenterY
 end
 
@@ -43,8 +46,6 @@ function Monster:draw()
   -- and height as I save it, otherwise collision engine doesn't work since it
   -- has wrong info.
   love.graphics.draw(self.img, self.x, self.y, 0, self.imgScale, self.imgScale)
-  local headX, headY = rectStartToHeadCenter(self)
-  love.graphics.circle('fill', headX, headY, 10)
 end
 
 function Monster:update(dt, world, playerX, playerY)
@@ -55,14 +56,9 @@ function Monster:update(dt, world, playerX, playerY)
   local monsterAttackAngle = math.atan(y / x)
 
   local dy = math.sin(monsterAttackAngle) * (dt * self.moveSpeedY)
-  local dx = math.cos(monsterAttackAngle) * (dt * speed)
-  print("dx and dy", dx, dy)
 
-  -- print(monsterAttackAngle)
-  -- move to our new x and y
-  -- print("selfx and selfy", self.x, self.y)
   local goalY = self.y + dy
-  local goalX = self.x + dx
+  local goalX = self.scanline.x - self.headOffsetX
 
   local colFilter = function(item, other)
     return 'cross'

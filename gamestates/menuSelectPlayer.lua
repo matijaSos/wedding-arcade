@@ -88,7 +88,7 @@ function menuSelectPlayer:draw()
 
     drawBg.drawMenuBackground(bgAssets)
 
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.setFont(titleFont)
     love.graphics.printf('Choose your wasp:', 0, h / 4, w, 'center')
 
@@ -134,7 +134,7 @@ function drawPlayerAndName(img, scaleFactor, imgX, imgY, name, nameY, isSelected
         scaleFactor, scaleFactor
     )
 
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(1, 1, 1)
     local nameText = love.graphics.newText(playerNameFont, name)
     love.graphics.draw(nameText,
         imgX + img:getWidth() * scaleFactor / 2 - nameText:getWidth() / 2,

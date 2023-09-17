@@ -1,7 +1,7 @@
 local Class = require 'libs.hump.class'
 local Entity = require 'entities.Entity'
 
-local Scanline = Class{
+local Scanline = Class {
     __includes = Entity
 }
 
@@ -25,7 +25,7 @@ function Scanline:update(dt)
     local adjustedXMovSpeed = self.xMovSpeed + math.min(1, (math.max(0, gameSpeedFactor - 1) / 2)) * 150
 
     local goalX = self.x + adjustedXMovSpeed * gameSpeedFactor * dt
-    local colFilter = function (item, other)
+    local colFilter = function(item, other)
         return 'cross'
     end
     self.x, self.y, collisions, collLen = world:move(

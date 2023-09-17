@@ -6,6 +6,9 @@ local Speedup = Class {
 }
 
 Speedup.effectName = 'speedup'
+-- Speedup.overlay = love.graphics.newImage('assets/overlay/25.png')
+Speedup.overlay = love.graphics.newImage('assets/overlay/10.png')
+
 
 function Speedup:init(x, y)
   self.isSpeedup = true

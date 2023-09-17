@@ -7,7 +7,7 @@ Control = {
     down = "down",
     action = "action",
 }
-for i = 1, 7 do
+for i = 1, 8 do
     Control['background' .. i] = 'background' .. i
 end
 
@@ -31,20 +31,13 @@ local leftControls = {
     [Control.right] = { 'key:right', 'key:d', 'axis:leftx+', 'button:dpright' },
     [Control.up] = { 'key:up', 'key:w', 'axis:lefty-', 'button:dpup' },
     [Control.down] = { 'key:down', 'key:s', 'axis:lefty+', 'button:dpdown' },
+    [Control.action] = { 'key:space', 'button:12' }
 }
 -- handle backgrounds with a for loop
-for i = 1, 7 do
+for i = 1, 8 do
     leftControls[Control["background" .. i]] = { 'key:' .. i }
 end
 
-leftControls.background1 = { 'key:1' }
-leftControls.background2 = { 'key:2' }
-leftControls.background3 = { 'key:3' }
-leftControls.background4 = { 'key:4' }
-leftControls.background5 = { 'key:5' }
-leftControls.background6 = { 'key:6' }
-leftControls.background7 = { 'key:7' }
-leftControls.action = { 'key:space', 'button:12' }
 
 -- write the above thing nicer
 

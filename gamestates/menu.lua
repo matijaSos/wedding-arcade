@@ -27,11 +27,11 @@ function menu:enter()
 
     -- Dancing title text
     self.titleTextbox = Text.new('left',
-    {
-        font = titleFont
-    })
+        {
+            font = titleFont,
+            color = { 1, 1, 1 }
+        })
     self.titleTextbox:send('[bounce=10]Wasp Escape[/bounce]', nil, true)
-
 end
 
 function menu:update(dt)
@@ -61,34 +61,33 @@ function menu:draw()
     drawBg.drawMenuBackground(bgAssets)
 
     -- Title
-    love.graphics.setColor(0,0,0)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.setFont(titleFont)
     -- TODO(matija): came up with the y-axis number emprically, not sure how to do
     -- it properly.
-    self.titleTextbox:draw(w/2 - self.titleTextbox.get.width / 2, h/2 - 80)
+    self.titleTextbox:draw(w / 2 - self.titleTextbox.get.width / 2, h / 2 - 80)
 
     -- Draw vertical menu here: "start new game", "highscore"
     drawMenuOptions(subtitleFont, options[self.selectedOptionIdx])
 end
 
-function drawMenuOptions (font, selectedOption)
+function drawMenuOptions(font, selectedOption)
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(1, 1, 1)
     love.graphics.setFont(font)
 
     love.graphics.printf(
         getOptionText('Start new game', selectedOption == NEW_GAME),
-        0, h/2 + 80, w, 'center'
+        0, h / 2 + 80, w, 'center'
     )
     love.graphics.printf(
         getOptionText('Leaderboard', selectedOption == LEADERBOARD),
-        0, h/2 + 80 + 80, w, 'center'
+        0, h / 2 + 80 + 80, w, 'center'
     )
-
 end
 
-function getOptionText (text, isSelected)
+function getOptionText(text, isSelected)
     if isSelected then return '> ' .. text .. ' <' end
 
     return text

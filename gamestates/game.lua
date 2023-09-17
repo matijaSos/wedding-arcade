@@ -40,12 +40,12 @@ local activeCity
 local possibleCities = {
   { 1, 5 },
   { 2, 6 },
-  { 3, 5 },
-  { 4, 6 },
-  { 5, 5 },
-  { 6, 6 },
-  { 7, 4 },
-  { 8, 5 }
+  -- { 3, 5 },
+  -- { 4, 6 },
+  -- { 5, 5 },
+  -- { 6, 6 },
+  -- { 7, 4 },
+  -- { 8, 5 }
 }
 
 local backgrounds
@@ -70,6 +70,11 @@ local pixelFontPath = 'assets/computer_pixel-7.ttf'
 local backgroundScroll = 0
 local BACKGROUND_SCROLL_SPEED = 0.02
 local circuitsBackground = love.graphics.newImage('assets/bg_circuit_long_big.png')
+local airshipsBackground = love.graphics.newImage('assets/airships/out.png')
+-- create a new image that consists of two airships images back to back
+
+-- local airshipsBackground = love.graphics.newImage('assets/balloons.png')
+
 
 
 function game:enter(oldState, playerConfig)
@@ -81,7 +86,7 @@ function game:enter(oldState, playerConfig)
   player = nil
   entities = {}
   loadCities()
-  setCity(7)
+  setCity(2)
 
   love.graphics.setBackgroundColor(1, 1, 1)
   hudFont = love.graphics.newFont(pixelFontPath, 64)
@@ -93,7 +98,7 @@ function game:enter(oldState, playerConfig)
   camera:setFollowStyle('PLATFORMER')
 
   scanline = Scanline()
-  -- addEntity(scanline)
+  addEntity(scanline)
 
   local platforms = generatePlatforms({ x = 0, y = 800, width = 200 }, TILE_SIZE)
   addEntities(platforms)
@@ -105,17 +110,17 @@ function game:enter(oldState, playerConfig)
   score = 0
   startingX = platforms[1].x
 
-  local monsterImg = love.graphics.newImage('assets/monsters/cropped_pixelated_green.png')
-  monster = Monster(scanline, 0, -1000, platforms[1].y, 150, 200, monsterImg, 0.5)
+  local monsterImg = love.graphics.newImage('assets/monsters/pixelated_jquery.png')
+  monster = Monster(scanline, 0, -1000, platforms[1].y, 150, 400, monsterImg, 0.5)
   world:add(monster, monster:getRect())
 end
 
 function game:update(dt)
-  for cityIndex = 1, 7 do
-    if inputL:down("background" .. cityIndex) then
-      setCity(cityIndex)
-    end
-  end
+  -- for cityIndex = 1, 8 do
+  --   if inputL:down("background" .. cityIndex) then
+  --     setCity(cityIndex)
+  --   end
+  -- end
   if player.x <= scanline.x or player.y > love.graphics.getHeight() * 2.5 then
     Gamestate.push(gameOver, score)
   end
@@ -177,9 +182,9 @@ end
 function drawCityBackground(baseBackgroundScroll)
   local width, height = love.graphics.getWidth(), love.graphics.getHeight()
 
-  love.graphics.setColor(1, 1, 1)
 
   local activeBackgrounds = getActiveBackgrounds()
+  love.graphics.setColor(1, 1, 1)
 
   for i = 1, #activeBackgrounds do
     local activeCityBackground = activeBackgrounds[i]
@@ -192,6 +197,14 @@ function drawCityBackground(baseBackgroundScroll)
     end
   end
 
+  local airshipsRatio = airshipsBackground:getWidth()
+  local airshipsWidth = airshipsRatio / width
+  local airshipsBackgroundScroll = baseBackgroundScroll / 5 * 4
+  for i = airshipsBackgroundScroll / airshipsWidth - 1, width / airshipsRatio do
+    love.graphics.draw(airshipsBackground, i * airshipsRatio, 40)
+  end
+
+
   -- draw a white rectangle across the entire screen
   -- love.graphics.setColor(1, 1, 1, 0.15)
   -- love.graphics.rectangle('fill', 0, 0, width, height)
@@ -199,28 +212,47 @@ end
 
 function getActiveBackgrounds()
   local backgrounds = {
-    [Slowdown.effectName] = cities[1],
-    [Speedup.effectName] = cities[2],
+    [Slowdown.effectName] = activeCity,
+    [Speedup.effectName] = activeCity,
   }
   return backgrounds[GameEffect] or activeCity
+end
+
+function drawOverlay(overlay)
+  love.graphics.setColor(1, 1, 1, 0.5)
+  local scale = love.graphics:getWidth() / overlay:getWidth()
+  love.graphics.draw(overlay, 0, 0, 0, scale, scale)
 end
 
 function game:draw()
   drawCityBackground(-backgroundScroll)
   -- drawSingleBackground(-backgroundScroll)
 
+  if GameEffect == Speedup then
+    drawOverlay(Speedup.overlay)
+  end
+
   camera:attach()
 
   for i, e in ipairs(entities) do
     e:draw()
   end
+  for i, e in ipairs(entities) do
+    if e.isPlatform then
+      e:drawFence()
+    end
+  end
   monster:draw()
 
   camera:detach()
 
+  if GameEffect == Slowdown then
+    drawOverlay(Slowdown.overlay)
+  end
+
   -- HUD
   love.graphics.setFont(hudFont)
-  love.graphics.setColor(0, 0, 0)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.printf("Score: " .. tostring(lume.round(score)) .. "m", 10, 10, love.graphics.getWidth(), 'center')
 end
 
@@ -307,7 +339,8 @@ function generateCollectable(collectableConstructor, collectableHeight)
   end
 
   if not (platform == nil or lastPlatformWithCollectable == platform) then
-    local y = platform.y - collectableHeight
+    -- todo(filip): the -6 is hardcoded to match the sin in collectable:update
+    local y = platform.y - collectableHeight - 6
     local x = math.random(platform.x, platform.x + platform.w)
     addEntity(collectableConstructor(x, y))
     lastPlatformWithCollectable = platform

@@ -4,7 +4,10 @@ local Collectable = require 'entities.Collectable'
 local Slowdown = Class {
   __includes = Collectable
 }
+
 Slowdown.effectName = 'slowdown'
+Slowdown.overlay = love.graphics.newImage('assets/overlay/8.png')
+
 
 function Slowdown:init(x, y)
   self.isSlowdown = true

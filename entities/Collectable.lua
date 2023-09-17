@@ -1,7 +1,7 @@
 local Class = require 'libs.hump.class'
 local Entity = require 'entities.Entity'
 
-local Collectable = Class{
+local Collectable = Class {
   __includes = Entity
 }
 
@@ -10,6 +10,7 @@ function Collectable:init(x, y, img, imgScaling)
   self.hasBeenCollected = false
   self.img = img
   self.imgScaling = imgScaling
+  self.originalY = y
 
   Entity.init(
     self,
@@ -35,7 +36,8 @@ function Collectable:collect()
 end
 
 function Collectable:update(dt, world)
-  -- TODO: animate. Make it rotate!
+  height = self.img:getHeight() * self.imgScaling
+  self.y = self.originalY + math.sin(love.timer.getTime() * 7) * 6
 end
 
 return Collectable

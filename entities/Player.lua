@@ -139,12 +139,12 @@ function Player:update(dt, world, gravity)
       if other.isSlowdown then
         self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT * 0.66
         self.secondsLeftTillXMovSpeedRecovery = 2
-        GameEffect = Slowdown.effectName
+        GameEffect = Slowdown
       end
       if other.isSpeedup then
         self.xMovSpeed = PLAYER_X_MOV_SPEED_DEFAULT * 1.33
         self.secondsLeftTillXMovSpeedRecovery = 2
-        GameEffect = Speedup.effectName
+        GameEffect = Speedup
       end
       other:collect()
       return 'cross'
