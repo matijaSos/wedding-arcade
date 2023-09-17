@@ -1,4 +1,3 @@
-
 -- lastPlatform is information about the previous platform, from which we
 -- continue adding new platforms.
 -- lastPlatform.x
@@ -6,9 +5,9 @@
 -- lastPlatform.width (in pixels)
 --
 -- TILE_SIZE is size of one tile in pixels.
-local generatePlatforms = function (lastPlatform, tileSize)
-    local minPlatformLengthInTiles = 4
-    local maxPlatformLengthInTiles = 20
+local generatePlatforms = function(lastPlatform, tileSize)
+    local minPlatformLengthInTiles = 2
+    local maxPlatformLengthInTiles = 10
 
     local minY = -100
     local maxY = love.graphics.getHeight() + 100
@@ -25,13 +24,13 @@ local generatePlatforms = function (lastPlatform, tileSize)
     local platformY = lastPlatform.y
     local platformLengthInTiles = lastPlatform.width / tileSize
 
-    for i=1, 20 do
+    for i = 1, 20 do
         -- Determine data for the next platform.
         local newPlatformLengthInTiles = math.random(
             minPlatformLengthInTiles, maxPlatformLengthInTiles
         )
         local newPlatformX = platformX + platformLengthInTiles * tileSize
-                             + math.random (minXDist, maxXDist)
+            + math.random(minXDist, maxXDist)
         local newPlatformY = clamp(
             platformY + getRandomSign() * math.random(minYDist, maxYDist),
             minY, maxY
@@ -42,10 +41,7 @@ local generatePlatforms = function (lastPlatform, tileSize)
         platformLengthInTiles = newPlatformLengthInTiles
 
         table.insert(platforms,
-                     Platform(
-                       platformX, platformY,
-                       platformLengthInTiles * tileSize, tileSize * 2
-                     )
+            Platform(platformX, platformY, platformLengthInTiles, TILE_SIZE, TILE_SIZE)
         )
     end
 

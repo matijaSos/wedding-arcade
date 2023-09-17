@@ -5,41 +5,58 @@ local Platform = Class {
   __includes = Entity
 }
 
-local block = love.graphics.newImage('assets/metal_block.png')
+local block_left = love.graphics.newImage('assets/industrial/tiles/IndustrialTile_04.png')
+local block_middle = love.graphics.newImage('assets/industrial/tiles/IndustrialTile_05.png')
+local block_right = love.graphics.newImage('assets/industrial/tiles/IndustrialTile_06.png')
 
-function Platform:init(x, y, w, h)
+function Platform:init(x, y, numberOfTiles, tileWidth, tileHeight)
   self.isPlatform = true
-  self.decorations = generateDecorations(w)
-  Entity.init(self, x, y, w, h)
+  self.numberOfTiles = numberOfTiles
+  self.tileWidth = tileWidth
+  self.tileHeight = tileHeight
+
+  local width = numberOfTiles * tileWidth
+  self.decorations = generateDecorations(width)
+  Entity.init(self, x, y, width, tileHeight)
 end
 
 function Platform:draw()
   -- Draw table
   -- love.graphics.draw(block, 100, 100)
-  love.graphics.setColor(0.95, 0.95, 0.95)
-  love.graphics.rectangle('fill', self:getRect())
-  love.graphics.setColor(0, 0, 0)
-  love.graphics.rectangle('line', self:getRect())
+  -- scale image block to tileWidth and tileHeight and draw it
+  local width = self.tileWidth / block_middle:getWidth()
+  local height = self.tileHeight / block_middle:getHeight()
 
-  -- Draw legs
-  love.graphics.setColor(love.math.colorFromBytes(164, 116, 73))
-  local legWidth = 20
-  local legHeight = 40
-  local distFromLegToTableEnd = 20
-  love.graphics.rectangle(
-    'fill',
-    self.x + distFromLegToTableEnd,
-    self.y + self.h,
-    legWidth,
-    legHeight
-  )
-  love.graphics.rectangle(
-    'fill',
-    self.x + self.w - legWidth - distFromLegToTableEnd,
-    self.y + self.h,
-    legWidth,
-    legHeight
-  )
+  love.graphics.draw(block_left, self.x, self.y, 0, width, height)
+  for i = 1, self.numberOfTiles - 1 do
+    love.graphics.draw(block_middle, self.x + i * self.tileWidth, self.y, 0, width, height)
+  end
+  love.graphics.draw(block_right, self.x + (self.numberOfTiles - 1) * self.tileWidth, self.y, 0, width, height)
+  -- ca
+  -- love.graphics.setColor(0.95, 0.95, 0.95)
+  -- love.graphics.rectangle('fill', self:getRect())
+  -- love.graphics.setColor(0, 0, 0)
+  -- love.graphics.rectangle('line', self:getRect())
+
+  -- -- Draw legs
+  -- love.graphics.setColor(love.math.colorFromBytes(164, 116, 73))
+  -- local legWidth = 20
+  -- local legHeight = 40
+  -- local distFromLegToTableEnd = 20
+  -- love.graphics.rectangle(
+  --   'fill',
+  --   self.x + distFromLegToTableEnd,
+  --   self.y + self.h,
+  --   legWidth,
+  --   legHeight
+  -- )
+  -- love.graphics.rectangle(
+  --   'fill',
+  --   self.x + self.w - legWidth - distFromLegToTableEnd,
+  --   self.y + self.h,
+  --   legWidth,
+  --   legHeight
+  -- )
   -- Draw decorations
   local decorationsTransparency = 0.3
   love.graphics.setColor(1, 1, 1, decorationsTransparency)

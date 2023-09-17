@@ -1,12 +1,14 @@
 local Class = require 'libs.hump.class'
 local Collectable = require 'entities.Collectable'
 
-local Coffee = Class{
+local Speedup = Class {
   __includes = Collectable
 }
 
-function Coffee:init(x, y)
-  self.isCoffee = true
+Speedup.effectName = 'speedup'
+
+function Speedup:init(x, y)
+  self.isSpeedup = true
 
   Collectable.init(
     self,
@@ -16,4 +18,4 @@ function Coffee:init(x, y)
   )
 end
 
-return Coffee
+return Speedup

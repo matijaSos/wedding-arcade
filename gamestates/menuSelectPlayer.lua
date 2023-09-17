@@ -5,6 +5,14 @@ local game = require 'gamestates.game'
 local inputs = require 'input'
 local inputR, inputL = inputs.right, inputs.left
 
+local titleFont
+local playerNameFont
+local bgAssets
+local alphaWaspImage
+local minecraftWaspImage
+local betaWaspImage
+local selectionPointer
+
 local menuSelectPlayer = {}
 
 -- TODO(matija): extract players info in a separate file.
@@ -19,19 +27,22 @@ availablePlayers[ALPHA_WASP] = {
     name = ALPHA_WASP,
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.25,
-    imgPath = 'assets/wasp_1.png'
+    imgPath = 'assets/wasp-1.png',
+    flippedImgPath = 'assets/wasp-1-flipped.png'
 }
 availablePlayers[MINECRAFT_WASP] = {
     name = MINECRAFT_WASP,
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.25,
-    imgPath = 'assets/minecraft-wasp.png'
+    imgPath = 'assets/minecraft-wasp.png',
+    flippedImgPath = 'assets/minecraft-wasp-flipped.png'
 }
 availablePlayers[BETA_WASP] = {
     name = BETA_WASP,
     scaleFactorInMenu = 0.25,
     scaleFactorInGame = 0.15,
-    imgPath = 'assets/wasp-beta.png'
+    imgPath = 'assets/wasp-beta.png',
+    flippedImgPath = 'assets/wasp-beta-flipped.png'
 }
 
 local selectedPlayerIdx
@@ -46,9 +57,9 @@ function menuSelectPlayer:enter()
 
     bgAssets = drawBg.loadMenuBgAssets()
 
-    hrvojeImg = love.graphics.newImage(availablePlayers[ALPHA_WASP].imgPath)
-    ninaImg = love.graphics.newImage(availablePlayers[MINECRAFT_WASP].imgPath)
-    ziziImg = love.graphics.newImage(availablePlayers[BETA_WASP].imgPath)
+    alphaWaspImage = love.graphics.newImage(availablePlayers[ALPHA_WASP].imgPath)
+    minecraftWaspImage = love.graphics.newImage(availablePlayers[MINECRAFT_WASP].imgPath)
+    betaWaspImage = love.graphics.newImage(availablePlayers[BETA_WASP].imgPath)
 
     selectionPointer = love.graphics.newImage('assets/red_arrow.png')
 end
@@ -85,30 +96,31 @@ function menuSelectPlayer:draw()
     local hrvojeScaleFactor = availablePlayers[ALPHA_WASP].scaleFactorInMenu
     -- TODO(matija): have a smarter way of determining this value?
     local playerNameY = h / 2 + 150
-    local spaceBetween = (w - 3 * hrvojeImg:getWidth() * hrvojeScaleFactor) / 4
+    local spaceBetween = (w - 3 * alphaWaspImage:getWidth() * hrvojeScaleFactor) / 4
 
     -- Draw Hrvoje
     local hrvojeX = spaceBetween
-    local hrvojeY = h / 2 - hrvojeImg:getHeight() * hrvojeScaleFactor / 2
-    drawPlayerAndName(hrvojeImg, hrvojeScaleFactor, hrvojeX, hrvojeY,
+    local hrvojeY = h / 2 - alphaWaspImage:getHeight() * hrvojeScaleFactor / 2
+    drawPlayerAndName(alphaWaspImage, hrvojeScaleFactor, hrvojeX, hrvojeY,
         ALPHA_WASP, playerNameY,
         availablePlayersList[selectedPlayerIdx] == ALPHA_WASP
     )
 
     -- Draw Nina
     local ninaScaleFactor = availablePlayers[MINECRAFT_WASP].scaleFactorInMenu
-    local ninaX = spaceBetween * 2 + hrvojeImg:getWidth() * hrvojeScaleFactor
-    local ninaY = h / 2 - ninaImg:getHeight() * ninaScaleFactor / 2
-    drawPlayerAndName(ninaImg, ninaScaleFactor, ninaX, ninaY,
+    local ninaX = spaceBetween * 2 + alphaWaspImage:getWidth() * hrvojeScaleFactor
+    local ninaY = h / 2 - minecraftWaspImage:getHeight() * ninaScaleFactor / 2
+    drawPlayerAndName(minecraftWaspImage, ninaScaleFactor, ninaX, ninaY,
         MINECRAFT_WASP, playerNameY,
         availablePlayersList[selectedPlayerIdx] == MINECRAFT_WASP
     )
 
     -- Draw Zizi
     local ziziScaleFactor = availablePlayers[BETA_WASP].scaleFactorInMenu
-    local ziziX = spaceBetween * 3 + hrvojeImg:getWidth() * hrvojeScaleFactor + ninaImg:getWidth() * ninaScaleFactor
-    local ziziY = h / 2 - ziziImg:getHeight() * ziziScaleFactor / 2
-    drawPlayerAndName(ziziImg, ziziScaleFactor, ziziX, ziziY,
+    local ziziX = spaceBetween * 3 + alphaWaspImage:getWidth() * hrvojeScaleFactor +
+        minecraftWaspImage:getWidth() * ninaScaleFactor
+    local ziziY = h / 2 - betaWaspImage:getHeight() * ziziScaleFactor / 2
+    drawPlayerAndName(betaWaspImage, ziziScaleFactor, ziziX, ziziY,
         BETA_WASP, playerNameY,
         availablePlayersList[selectedPlayerIdx] == BETA_WASP
     )

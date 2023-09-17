@@ -1,12 +1,13 @@
 local Class = require 'libs.hump.class'
 local Collectable = require 'entities.Collectable'
 
-local Brandy = Class{
+local Slowdown = Class {
   __includes = Collectable
 }
+Slowdown.effectName = 'slowdown'
 
-function Brandy:init(x, y)
-  self.isBrandy = true
+function Slowdown:init(x, y)
+  self.isSlowdown = true
 
   Collectable.init(
     self,
@@ -16,4 +17,4 @@ function Brandy:init(x, y)
   )
 end
 
-return Brandy
+return Slowdown

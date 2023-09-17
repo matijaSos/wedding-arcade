@@ -2,9 +2,11 @@ bump = require 'libs.bump.bump'
 Camera = require 'libs.stalker-x.Camera'
 Gamestate = require 'libs.hump.gamestate'
 lume = require 'libs.lume.lume'
-local inputs = require 'input'
 
-local inputR, inputL = inputs.right, inputs.left
+local input = require 'input'
+local inputR, inputL = input.right, input.left
+local Control = input.Control
+
 
 local gameOver = require 'gamestates.gameOver'
 
@@ -12,25 +14,26 @@ Player = require 'entities.Player'
 Platform = require 'entities.Platform'
 Scanline = require 'entities.Scanline'
 FlyingObstacle = require 'entities.FlyingObstacle'
-Brandy = require 'entities.Brandy'
-Coffee = require 'entities.Coffee'
-Musician = require 'entities.Musician'
+Slowdown = require 'entities.Slowdown'
+Speedup = require 'entities.Speedup'
+Monster = require 'entities.Monster'
 
 misc = require 'misc'
 generatePlatforms = require 'generatePlatforms'
 
 -- TODO(matija): make these constants written in caps.
-TILE_SIZE = 24
+TILE_SIZE = 48
 local gravity = 3000
 ONE_METER_IN_PX = 100
 gameSpeedFactor = 0.8
-gameEffect = nil -- Or 'coffee' or 'brandy'
+GameEffect = nil -- Or 'coffee' or 'brandy'
 
 local game = {}
 
 local scanline
 local player
 local entities
+local monster
 local cities = {}
 local activeCity
 
@@ -44,6 +47,8 @@ local possibleCities = {
   { 7, 4 },
   { 8, 5 }
 }
+
+local backgrounds
 
 local function loadCities()
   for index, city in ipairs(possibleCities) do
@@ -100,28 +105,15 @@ function game:enter(oldState, playerConfig)
   score = 0
   startingX = platforms[1].x
 
-  local musician1Img = love.graphics.newImage('assets/php-logo.png')
-  local musician1ImgScale = 0.3
-  local musician2Img = love.graphics.newImage('assets/jquery-logo.png')
-  local musician2ImgScale = 0.45
-  local musician3Img = love.graphics.newImage('assets/spring-logo.png')
-  local musician3ImgScale = 0.45
-  local musicians = {
-    Musician(scanline, 0, 200, 1, 150, 200, musician1Img, musician1ImgScale),
-    Musician(scanline, 20, 300, -1, 150, 300, musician2Img, musician2ImgScale),
-    Musician(scanline, -20, 500, -1, 100, 250, musician3Img, musician3ImgScale),
-    Musician(scanline, 5, 600, 1, 100, 300, musician2Img, musician2ImgScale),
-    Musician(scanline, 25, 650, 1, 200, 200, musician1Img, musician1ImgScale),
-    Musician(scanline, -10, 800, 1, 200, 300, musician2Img, musician2ImgScale),
-    Musician(scanline, -25, 900, -1, 150, 250, musician3Img, musician3ImgScale)
-  }
-  addEntities(musicians)
+  local monsterImg = love.graphics.newImage('assets/monsters/cropped_pixelated_green.png')
+  monster = Monster(scanline, 0, -1000, platforms[1].y, 150, 200, monsterImg, 0.5)
+  world:add(monster, monster:getRect())
 end
 
 function game:update(dt)
-  for city_index = 1, 7 do
-    if inputL:down('background' .. city_index) then
-      setCity(city_index)
+  for cityIndex = 1, 7 do
+    if inputL:down("background" .. cityIndex) then
+      setCity(cityIndex)
     end
   end
   if player.x <= scanline.x or player.y > love.graphics.getHeight() * 2.5 then
@@ -131,6 +123,7 @@ function game:update(dt)
   camera:update(dt)
   camera:follow(player.x, player.y)
 
+  monster:update(dt, world, player.x, player.y)
   for i, e in ipairs(entities) do
     e:update(dt, world, gravity)
   end
@@ -205,20 +198,23 @@ function drawCityBackground(baseBackgroundScroll)
 end
 
 function getActiveBackgrounds()
-  if gameEffect == 'coffee' then return activeCity end
-  if gameEffect == 'brandy' then return activeCity end
-  return activeCity
+  local backgrounds = {
+    [Slowdown.effectName] = cities[1],
+    [Speedup.effectName] = cities[2],
+  }
+  return backgrounds[GameEffect] or activeCity
 end
 
 function game:draw()
-  -- drawCityBackground(-backgroundScroll)
-  drawSingleBackground(-backgroundScroll)
+  drawCityBackground(-backgroundScroll)
+  -- drawSingleBackground(-backgroundScroll)
 
   camera:attach()
 
   for i, e in ipairs(entities) do
     e:draw()
   end
+  monster:draw()
 
   camera:detach()
 
@@ -289,10 +285,10 @@ end
 function maybeGenerateNewCollectables(dt)
   -- TODO: Make chance of collectable proportional to time passed (dt), somehow.
   if math.random(0, 1000) < 10 then
-    generateCollectable(Brandy, 80)
+    generateCollectable(Slowdown, 80)
   end
   if math.random(0, 1000) < 10 then
-    generateCollectable(Coffee, 40)
+    generateCollectable(Speedup, 40)
   end
 end
 

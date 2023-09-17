@@ -1,40 +1,61 @@
 local baton = require 'libs.baton.baton'
 
--- TODO(matija): extract control names in variables and return from this file
--- so I don't have to hardcode it across the game when checking whether
--- some control is pressed.
+Control = {
+    left = "left",
+    right = "right",
+    up = "up",
+    down = "down",
+    action = "action",
+}
+for i = 1, 7 do
+    Control['background' .. i] = 'background' .. i
+end
+
+-- do the same thing but while initializing the map
+local rightControls = {
+    [Control.right] = { 'axis:leftx+', 'button:dpright' },
+    [Control.left] = { 'axis:leftx-', 'button:dpleft' },
+    [Control.up] = { 'axis:lefty-', 'button:dpup' },
+    [Control.down] = { 'axis:lefty+', 'button:dpdown' },
+    [Control.action] = { 'button:1' }
+}
+
 local inputR = baton.new {
-    controls = {
-        left = { 'axis:leftx-', 'button:dpleft' },
-        right = { 'axis:leftx+', 'button:dpright' },
-        up = { 'axis:lefty-', 'button:dpup' },
-        down = { 'axis:lefty+', 'button:dpdown' },
-        action = { 'button:1' },
-    },
+    controls = rightControls,
     -- Right joystick on the arcade.
     joystick = love.joystick.getJoysticks()[1]
 }
 
+local leftControls = {
+    [Control.left] = { 'key:left', 'key:a', 'axis:leftx-', 'button:dpleft' },
+    [Control.right] = { 'key:right', 'key:d', 'axis:leftx+', 'button:dpright' },
+    [Control.up] = { 'key:up', 'key:w', 'axis:lefty-', 'button:dpup' },
+    [Control.down] = { 'key:down', 'key:s', 'axis:lefty+', 'button:dpdown' },
+}
+-- handle backgrounds with a for loop
+for i = 1, 7 do
+    leftControls[Control["background" .. i]] = { 'key:' .. i }
+end
+
+leftControls.background1 = { 'key:1' }
+leftControls.background2 = { 'key:2' }
+leftControls.background3 = { 'key:3' }
+leftControls.background4 = { 'key:4' }
+leftControls.background5 = { 'key:5' }
+leftControls.background6 = { 'key:6' }
+leftControls.background7 = { 'key:7' }
+leftControls.action = { 'key:space', 'button:12' }
+
+-- write the above thing nicer
+
 local inputL = baton.new {
-    controls = {
-        left = { 'key:left', 'key:a', 'axis:leftx-', 'button:dpleft' },
-        right = { 'key:right', 'key:d', 'axis:leftx+', 'button:dpright' },
-        up = { 'key:up', 'key:w', 'axis:lefty-', 'button:dpup' },
-        down = { 'key:down', 'key:s', 'axis:lefty+', 'button:dpdown' },
-        background1 = { 'key:1' },
-        background2 = { 'key:2' },
-        background3 = { 'key:3' },
-        background4 = { 'key:4' },
-        background5 = { 'key:5' },
-        background6 = { 'key:6' },
-        background7 = { 'key:7' },
-        action = { 'key:space', 'button:12' },
-    },
+    controls = leftControls,
     -- Left joystick on the arcade.
     joystick = love.joystick.getJoysticks()[2]
 }
 
 return {
+    Control = Control,
     right = inputR,
     left = inputL
 }
