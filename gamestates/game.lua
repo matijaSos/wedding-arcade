@@ -184,6 +184,7 @@ function drawCityBackground(baseBackgroundScroll)
 
 
   local activeBackgrounds = getActiveBackgrounds()
+  -- put a transparent overlay over the background
   love.graphics.setColor(1, 1, 1)
 
   for i = 1, #activeBackgrounds do
@@ -203,6 +204,9 @@ function drawCityBackground(baseBackgroundScroll)
   for i = airshipsBackgroundScroll / airshipsWidth - 1, width / airshipsRatio do
     love.graphics.draw(airshipsBackground, i * airshipsRatio, 40)
   end
+
+  love.graphics.setColor(1, 1, 1, 0.2)
+  love.graphics.rectangle('fill', 0, 0, width, height)
 
 
   -- draw a white rectangle across the entire screen

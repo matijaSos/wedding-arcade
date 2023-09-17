@@ -44,6 +44,7 @@ function Platform:draw()
   local height = self.tileHeight / block_middle:getHeight()
 
 
+  love.graphics.setColor(1, 1, 1)
   love.graphics.draw(block_left, self.x, self.y, 0, width, height)
   for i = 1, self.numberOfTiles - 1 do
     love.graphics.draw(block_middle, self.x + i * self.tileWidth, self.y, 0, width, height)
