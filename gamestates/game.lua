@@ -69,8 +69,8 @@ end
 local pixelFontPath = 'assets/computer_pixel-7.ttf'
 local backgroundScroll = 0
 local BACKGROUND_SCROLL_SPEED = 0.02
-local circuitsBackground = love.graphics.newImage('assets/bg_circuit_long_big.png')
-local airshipsBackground = love.graphics.newImage('assets/airships/out.png')
+-- local circuitsBackground = love.graphics.newImage('assets/bg_circuit_long_big.png')
+-- local airshipsBackground = love.graphics.newImage('assets/airships/out.png')
 -- create a new image that consists of two airships images back to back
 
 -- local airshipsBackground = love.graphics.newImage('assets/balloons.png')
@@ -198,15 +198,15 @@ function drawCityBackground(baseBackgroundScroll)
     end
   end
 
-  local airshipsRatio = airshipsBackground:getWidth()
-  local airshipsWidth = airshipsRatio / width
-  local airshipsBackgroundScroll = baseBackgroundScroll / 5 * 4
-  for i = airshipsBackgroundScroll / airshipsWidth - 1, width / airshipsRatio do
-    love.graphics.draw(airshipsBackground, i * airshipsRatio, 40)
-  end
+  -- local airshipsRatio = airshipsBackground:getWidth()
+  -- local airshipsWidth = airshipsRatio / width
+  -- local airshipsBackgroundScroll = baseBackgroundScroll / 5 * 4
+  -- for i = airshipsBackgroundScroll / airshipsWidth - 1, width / airshipsRatio do
+  --   love.graphics.draw(airshipsBackground, i * airshipsRatio, 40)
+  -- end
 
-  love.graphics.setColor(1, 1, 1, 0.2)
-  love.graphics.rectangle('fill', 0, 0, width, height)
+  -- love.graphics.setColor(1, 1, 1, 0.2)
+  -- love.graphics.rectangle('fill', 0, 0, width, height)
 
 
   -- draw a white rectangle across the entire screen
