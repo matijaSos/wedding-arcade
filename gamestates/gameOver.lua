@@ -14,7 +14,7 @@ local scoreAchieved
 local SAVE = 'Save'
 local RESTART = 'Restart'
 
-local buttons = { RESTART, SAVE }
+local buttons = { SAVE, RESTART }
 local selectedButtonIdx
 
 function gameOver:enter(from, score)
