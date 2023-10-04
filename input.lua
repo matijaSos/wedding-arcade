@@ -13,10 +13,10 @@ end
 
 -- do the same thing but while initializing the map
 local rightControls = {
-    [Control.right] = { 'axis:leftx+', 'button:dpright' },
-    [Control.left] = { 'axis:leftx-', 'button:dpleft' },
-    [Control.up] = { 'axis:lefty-', 'button:dpup' },
-    [Control.down] = { 'axis:lefty+', 'button:dpdown' },
+    [Control.right] = { 'axis:0+', 'button:dpright' },
+    [Control.left] = { 'axis:0-', 'button:dpleft' },
+    -- [Control.up] = { 'axis:1y-', 'button:dpup' },
+    -- [Control.down] = { 'axis:y+', 'button:dpdown' },
     [Control.action] = { 'button:1' }
 }
 
@@ -27,10 +27,10 @@ local inputR = baton.new {
 }
 
 local leftControls = {
-    [Control.left] = { 'key:left', 'key:a', 'axis:leftx-', 'button:dpleft' },
-    [Control.right] = { 'key:right', 'key:d', 'axis:leftx+', 'button:dpright' },
-    [Control.up] = { 'key:up', 'key:w', 'axis:lefty-', 'button:dpup' },
-    [Control.down] = { 'key:down', 'key:s', 'axis:lefty+', 'button:dpdown' },
+    [Control.left] = { 'key:left', 'key:a', 'axis:1-', 'button:dpleft' },
+    [Control.right] = { 'key:right', 'key:d', 'axis:1+', 'button:dpright' },
+    [Control.up] = { 'key:up', 'key:w', 'axis:2-', 'button:dpup' },
+    [Control.down] = { 'key:down', 'key:s', 'axis:2+', 'button:dpdown' },
     [Control.action] = { 'key:space', 'button:12' }
 }
 -- handle backgrounds with a for loop
