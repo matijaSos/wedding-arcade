@@ -22,16 +22,16 @@ availablePlayers[HRVOJE] = {
     imgPath = 'assets/player_hrvoje.png'
 }
 availablePlayers[NINA] = {
-    name = NINA,
+    name = 'Andreja',
     scaleFactorInMenu = 0.4,
     scaleFactorInGame = 0.2,
     imgPath = 'assets/player_nina.png'
 }
 availablePlayers[ZIZI] = {
     name = ZIZI,
-    scaleFactorInMenu = 0.35,
-    scaleFactorInGame = 0.175,
-    imgPath = 'assets/player_zizi.png'
+    scaleFactorInMenu = 0.4,
+    scaleFactorInGame = 0.2,
+    imgPath = 'assets/player_matija.png'
 }
 
 local selectedPlayerIdx
@@ -88,29 +88,29 @@ function menuSelectPlayer:draw()
     local playerNameY = h/2 + 150
     local spaceBetween = (w - 3 * hrvojeImg:getWidth() * hrvojeScaleFactor) / 4
 
-    -- Draw Hrvoje
+    -- Draw Martin
     local hrvojeX = spaceBetween
     local hrvojeY = h/2 - hrvojeImg:getHeight() * hrvojeScaleFactor / 2 
     drawPlayerAndName(hrvojeImg, hrvojeScaleFactor, hrvojeX, hrvojeY,
-        HRVOJE, playerNameY,
+        'Martin', playerNameY,
         availablePlayersList[selectedPlayerIdx] == HRVOJE
     )
 
-    -- Draw Nina
+    -- Draw Andreja
     local ninaScaleFactor = availablePlayers[NINA].scaleFactorInMenu
     local ninaX = spaceBetween * 2 + hrvojeImg:getWidth() * hrvojeScaleFactor 
     local ninaY = h/2 - ninaImg:getHeight() * ninaScaleFactor / 2
     drawPlayerAndName(ninaImg, ninaScaleFactor, ninaX, ninaY,
-        NINA, playerNameY,
+        'Andreja', playerNameY,
         availablePlayersList[selectedPlayerIdx] == NINA
     )
 
-    -- Draw Zizi
+    -- Draw Matija
     local ziziScaleFactor = availablePlayers[ZIZI].scaleFactorInMenu
     local ziziX = spaceBetween * 3 + hrvojeImg:getWidth() * hrvojeScaleFactor + ninaImg:getWidth() * ninaScaleFactor
     local ziziY = h/2 - ziziImg:getHeight() * ziziScaleFactor / 2
     drawPlayerAndName(ziziImg, ziziScaleFactor, ziziX, ziziY,
-        ZIZI, playerNameY,
+        'Matija', playerNameY,
         availablePlayersList[selectedPlayerIdx] == ZIZI
     )
 end
