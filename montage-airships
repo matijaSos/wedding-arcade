@@ -1,0 +1,2 @@
+#!/bin/bash
+montage assets/airships/{1..7}.png -geometry +1000 -background none -tile 7x1 assets/airships/out.png
